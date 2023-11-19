@@ -11,8 +11,10 @@ def create_app(config_class=Config):
   db.init_app(app)
 
   with app.app_context():
-    
+
     db.create_all()
+    db.session.commit()
+
 
   # Register blueprints here
   from app.main import bp as main_bp

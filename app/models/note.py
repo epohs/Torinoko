@@ -11,4 +11,5 @@ class Note(db.Model):
   content = db.Column(EncryptedType(db.Text, key), nullable=True, unique=False)
 
   def __repr__(self):
+
     return f'<Note "{self.title}">'
