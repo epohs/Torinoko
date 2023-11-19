@@ -4,15 +4,19 @@ from app.ext import db
 
 def create_app(config_class=Config):
 
-    app = Flask(__name__)
-    app.config.from_object(config_class)
+  app = Flask(__name__)
+  app.config.from_object(config_class)
 
-    # Initialize Flask extensions here
-    db.init_app(app)
+  # Initialize Flask extensions here
+  db.init_app(app)
 
-    # Register blueprints here
-    from app.main import bp as main_bp
+  with app.app_context():
+    
+    db.create_all()
 
-    app.register_blueprint(main_bp)
+  # Register blueprints here
+  from app.main import bp as main_bp
 
-    return app
+  app.register_blueprint(main_bp)
+
+  return app
