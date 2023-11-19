@@ -1,0 +1,44 @@
+html {
+  font-size: 62.5%;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+*,
+*:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-size: 1.6rem;
+  color: #fff;
+  letter-spacing: 0.05em;
+  background-color: #343434;
+}
+
+a {
+  color: #ffbe00;
+}
+
+a:visited {
+  color: #cd9800;
+}
+
+a:hover {
+  color: #ffde00;
+}
+
+p {
+  margin: 1.5em 0;
+}
+
+.page-body {
+  max-width: 40em;
+  padding: 1em 3em;
+  margin: 1em auto;
+  font-size: 1.5em;
+}
+
+.page-body :first-child {
+  margin-top: 0;
+}
