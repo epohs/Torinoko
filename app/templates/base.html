@@ -6,15 +6,18 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
+
   <nav>
-    <a href="{{ url_for('main.index') }}">FlaskApp</a>
-    <a href="#">Posts</a>
-    <a href="#">Categories</a>
-    <a href="#">Questions</a>
+    <a href="{{ url_for('main.index') }}">Home</a>
   </nav>
+  
   <hr>
-  <main class="content">
-    {% block content %} {% endblock %}
+
+  <main class="page-body">
+    <div class="content">
+      {% block content %} {% endblock %}
+    </div>
   </main>
+
 </body>
 </html>
