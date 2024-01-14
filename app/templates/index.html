@@ -8,4 +8,15 @@
 
 <p>Form to add new note will go here.</p>
 
+
+<h3>All notes</h3>
+
+<ul>
+ {% for note in notes %}
+ 
+  <li>ID: {{note.id}} | content: {{note.clean_note}}</li>
+ 
+ {% endfor %}
+</ul>
+
 {% endblock %}
