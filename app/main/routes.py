@@ -41,52 +41,19 @@ def new():
 
   if request.method == 'POST' and form.validate():
   
-    from app.ext import produce_slugs
+    from app.ext import db
 
-    # Get a group of potential random slugs
-    slugs = produce_slugs(15)
-  
-    good_slug = None
-
-  
-    # Loop through our random slugs checking for the first slug
-    # that doesn't already exist in the database
-    for slug in slugs:
-
-      found_row = Note.query.filter_by( slug=slug ).first()
-
-      if not found_row:
-
-        good_slug = slug
-
-        break
+    new_note = Note( content=form.new_note.data )
+    db.session.add(new_note)
+    db.session.commit()
     
-    # If we have a good slug and a valid form
-    # we're ready to create a new note.
-    # Otherwise, something weird wend wrong
-    if good_slug:
-    
-      from app.ext import db
-    
-      new_note = Note( content=form.new_note.data, slug=good_slug )
-      db.session.add(new_note)
-      db.session.commit()
-      
-      return redirect(url_for('main.index'))
-      
-    else:
-    
-      # Should probably create a new error page for situations like this
-      return redirect(url_for('main.bad_note'))
+    return redirect(url_for('main.index'))
 
   else:
   
     # Redirect to our error page
     return redirect(url_for('main.bad_note'))
-    
-    
-  
-  return render_template('new.html', slugs=slugs, good_slug=good_slug)
+
 
 
 

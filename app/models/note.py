@@ -32,10 +32,12 @@ class Note(db.Model):
 
 
 
-  def __init__(self, content, slug):
+  def __init__(self, content):
+  
+    from app.ext import get_good_slug
   
     self.content = self.fernet.encrypt( bytes(content.encode('utf-8')) )
-    self.slug = slug
+    self.slug = get_good_slug(self)
 
     
   @hybrid_property    

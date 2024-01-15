@@ -1,12 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
-import base64, hashlib
-
 
 db = SQLAlchemy()
 
 
 
 
+
+### Everything below this should be moved to a utils file
+
+import base64, hashlib
 
 # https://stackoverflow.com/questions/44432945/generating-own-key-with-python-fernet
 def gen_fernet_key(passcode:bytes) -> bytes:
@@ -23,6 +25,9 @@ from secrets import choice
 import numpy as np
 from functools import partial
 
+
+
+# Create a number of potential random strings to be used as note slugs
 def produce_slugs(amount_of_keys, _randint=np.random.randint):
   
   keys = set()
@@ -38,3 +43,42 @@ def produce_slugs(amount_of_keys, _randint=np.random.randint):
   
   
   
+# Take a list of potential slugs, check the database to make sure the
+# slug is not already in use and return the first free one.
+def get_good_slug(model_obj):
+  
+  slugs = produce_slugs(15)
+
+  good_slug = None
+
+
+  # Loop through our random slugs checking for the first slug
+  # that doesn't already exist in the database
+  for slug in slugs:
+
+    found_row = model_obj.query.filter_by( slug=slug ).first()
+
+    if not found_row:
+
+      good_slug = slug
+
+      break
+  
+  # If we have a good slug and a valid form
+  # we're ready to create a new note.
+  # Otherwise, something weird wend wrong
+  if good_slug:
+  
+    return good_slug
+    
+  else:
+
+    # If all of the slugs we tried were already in use
+    # call the function recursively.
+    # @todo Add some checks so that this doesn't run away.
+    get_good_slug()
+
+
+
+
+
