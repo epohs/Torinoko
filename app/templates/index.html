@@ -6,7 +6,33 @@
 
 <h1 class="Heading">Create a new note</h1>
 
-<p>Form to add new note will go here.</p>
+
+
+
+<form action="{{ url_for('main.new') }}" method="post">
+
+  {{ form.csrf_token }}
+
+  {{ form.new_note }}
+  
+  {% if form.new_note.errors %}
+    <ul class="errors">
+    {% for error in form.new_note.errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}  
+  
+  
+  <p>{{ form.submit_btn }}</p>
+
+</form>
+
+
+
+
+
+<hr>
 
 
 <h3>All notes</h3>

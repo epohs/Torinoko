@@ -15,15 +15,17 @@ def create_app( config_class=Config ):
   db.init_app(app)
 
   from app.models.note import Note
+  
+  
 
   with app.app_context():
 
     db.create_all()
     db.session.commit()	
 
-    test_note = Note( content='hey this is a test note' )
-    db.session.add(test_note)
-    db.session.commit()
+    #test_note = Note( content='hey this is a test note' )
+    #db.session.add(test_note)
+    #db.session.commit()
 
 
 
