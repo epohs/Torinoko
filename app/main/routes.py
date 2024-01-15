@@ -11,3 +11,5 @@ def index():
   notes = Note.query.all()
 
   return render_template('index.html', notes=notes)
+
+

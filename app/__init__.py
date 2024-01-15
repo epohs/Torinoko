@@ -2,6 +2,10 @@ from flask import Flask
 from config import Config
 from app.ext import db
 
+
+
+
+
 def create_app( config_class=Config ):
 
   app = Flask(__name__)
@@ -27,5 +31,18 @@ def create_app( config_class=Config ):
   from app.main import bp as main_bp
 
   app.register_blueprint(main_bp)
+ 
+
+  # Disable browser caching if we're in debug mode
+  if app.config['DEBUG']:
+
+    @app.after_request
+    def add_header(r):
+	
+      r.headers["Cache-Control"] = "no-store, must-revalidate"
+      r.headers["Pragma"] = "no-cache"
+      r.headers["Expires"] = "0"
+
+      return r
 
   return app
