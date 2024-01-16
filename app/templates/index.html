@@ -37,12 +37,12 @@
 
 <h3>All notes</h3>
 
-<ul>
+<ol>
  {% for note in notes %}
  
-  <li>ID: {{note.id}} | Content: {{note.clean_note}}</li>
+  <li>{{note.id}} | <a href="{{ url_for("main.view_note", slug=note.slug)}}">{{note.slug}}</a> | {{note.clean_note}}</li>
  
  {% endfor %}
-</ul>
+</ol>
 
 {% endblock %}
