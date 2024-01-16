@@ -35,7 +35,7 @@ def index():
 
 
 @bp.route('/new', methods=['GET', 'POST'])
-def new():
+def new_note():
 
   form = NewNoteForm(request.form)
 
@@ -47,7 +47,9 @@ def new():
     db.session.add(new_note)
     db.session.commit()
     
-    return redirect(url_for('main.index'))
+    just_added_note = Note.query.get(new_note.id)
+    
+    return redirect(url_for('main.view_note', slug=just_added_note.slug))
 
   else:
   
@@ -59,8 +61,38 @@ def new():
 
 
 
+@bp.route('/note/<string:slug>')
+def view_note(slug):
+
+  if not isinstance(slug, str) or len(slug) < 5:
+  
+    return redirect(url_for('main.no_note'))
+    
+  else:
+  
+    note = Note.query.filter_by( slug=slug ).first()
+    
+    if note:
+    
+      return render_template('view-note.html', note=note)
+      
+    else:
+    
+      return redirect(url_for('main.no_note'))
 
 
+
+
+
+
+# @todo these two routes should be combined
+# to use unique URLs, but the same template
+# with the content being passed as a parameter
+# and descriptive of why the user got an error.
+@bp.route('/no-note')
+def no_note():
+
+  return render_template('no-note.html')
 
 @bp.route('/new/error')
 def bad_note():

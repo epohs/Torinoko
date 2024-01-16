@@ -18,12 +18,18 @@ def gen_fernet_key(passcode:bytes) -> bytes:
   return base64.urlsafe_b64encode(hlib.hexdigest().encode('latin-1'))
   
   
+
+
+
   
 
 import string
 from secrets import choice
 import numpy as np
 from functools import partial
+
+
+
 
 
 
@@ -40,9 +46,11 @@ def produce_slugs(amount_of_keys, _randint=np.random.randint):
     keys |= {''.join([pickchar() for _ in range(_randint(5, 20))]) for _ in range(amount_of_keys - len(keys))}
 
   return keys
-  
-  
-  
+
+
+
+
+
 # Take a list of potential slugs, check the database to make sure the
 # slug is not already in use and return the first free one.
 def get_good_slug(model_obj):

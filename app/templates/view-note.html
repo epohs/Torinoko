@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}New Note{% endblock %}
+
+{% block content %}
+
+<h1 class="Heading">View note</h1>
+
+
+{% if note %}
+
+  <ul>
+    <li>id: {{ note.id }}</li>
+    <li>slug: {{ note.slug }}</li>
+    <li>content: {{ note.clean_note }}</li>
+    <li>created_at: {{ note.created_at }}</li>
+  </ul>
+
+{% else %}
+
+  <p>This isn't supposed to happen but this note doesn't exist</p>
+
+{% endif %}
+
+
+
+{% endblock %}

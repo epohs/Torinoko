@@ -9,11 +9,11 @@
 
 
 
-<form action="{{ url_for('main.new') }}" method="post">
+<form action="{{ url_for('main.new_note') }}" method="post">
 
   {{ form.csrf_token }}
 
-  {{ form.new_note }}
+  {{ form.new_note(class_="note-content") }}
   
   {% if form.new_note.errors %}
     <ul class="errors">
