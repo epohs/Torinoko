@@ -1,6 +1,6 @@
 from config import Config
 from app.ext import db, gen_fernet_key
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.ext.hybrid import hybrid_property
 
 
