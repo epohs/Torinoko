@@ -15,7 +15,10 @@
 
   {{ form.new_note(class_="note-content") }}
   
-  <p>{{ form.passphrase(class_="note-passphrase") }}</p>
+  <p>
+    <label for="{{form.passphrase.id}}">{{form.passphrase.label}}</label><br>
+    {{ form.passphrase(class_="note-passphrase") }}
+  </p>
   
   {% if form.new_note.errors %}
     <ul class="errors">
