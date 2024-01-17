@@ -11,9 +11,7 @@ from app.forms import NewNoteForm, ViewNoteForm
 @bp.route('/')
 def index():
 
-  
   form = NewNoteForm()
-  
 
   # TEMP for displaying all notes
   notes = Note.query.all()
@@ -34,6 +32,7 @@ def index():
 def new_note():
 
   form = NewNoteForm(request.form)
+
 
   if request.method == 'POST' and form.validate():
   
