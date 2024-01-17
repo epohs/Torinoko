@@ -1,7 +1,7 @@
 from flask import render_template, request, url_for, redirect
 from app.main import bp
 from app.models.note import Note
-from app.forms import NewNoteForm
+from app.forms import NewNoteForm, ViewNoteForm
 
 
 
@@ -39,7 +39,7 @@ def new_note():
     
     just_added_note = Note.query.get(new_note.id)
     
-    return redirect(url_for('main.view_note', slug=just_added_note.slug))
+    return redirect(url_for('main.secret', slug=just_added_note.slug))
 
   else:
   
@@ -51,7 +51,26 @@ def new_note():
 
 
 
-@bp.route('/note/<string:slug>')
+@bp.route('/secret/<string:slug>')
+def secret(slug):
+
+
+  if not isinstance(slug, str) or len(slug) < 5:
+  
+    return redirect(url_for('main.no_note'))
+    
+  else:
+  
+    form = ViewNoteForm(request.form, note_slug=slug)
+    
+    return render_template('secret.html', slug=slug, form=form)
+
+
+
+
+
+
+@bp.route('/note/<string:slug>', methods=['POST'])
 def view_note(slug):
 
   if not isinstance(slug, str) or len(slug) < 5:
