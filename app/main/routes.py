@@ -18,6 +18,11 @@ def index():
   # TEMP for displaying all notes
   notes = Note.query.all()
 
+
+  # Look into the package `Wonderwords` for generating a random passphrase
+  # https://pypi.org/project/wonderwords/
+
+
   return render_template('index.html', form=form, notes=notes)
 
 
