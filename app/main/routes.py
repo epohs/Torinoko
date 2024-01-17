@@ -1,4 +1,5 @@
 from flask import render_template, request, url_for, redirect
+from app.ext import db
 from app.main import bp
 from app.models.note import Note
 from app.forms import NewNoteForm, ViewNoteForm
@@ -61,10 +62,17 @@ def secret(slug):
     
   else:
   
-    form = ViewNoteForm(request.form, note_slug=slug)
+    note = Note.query.filter_by( slug=slug ).first()
     
-    return render_template('secret.html', slug=slug, form=form)
-
+    if note:
+    
+      form = ViewNoteForm(request.form, note_slug=slug)
+    
+      return render_template('secret.html', slug=slug, form=form)
+      
+    else:
+    
+      return redirect(url_for('main.no_note'))
 
 
 
@@ -83,11 +91,22 @@ def view_note(slug):
     
     if note:
     
-      return render_template('view-note.html', note=note)
+      # Render the template, then delete the note.
+      try:
+      
+        return render_template('view-note.html', note=note)
+      
+      finally:
+      
+        db.session.delete(note)
+        db.session.commit()
       
     else:
     
       return redirect(url_for('main.no_note'))
+
+
+
 
 
 
@@ -110,6 +129,27 @@ def bad_note():
 
 
 
+
+
+
+
+@bp.app_errorhandler(405)
+def method_not_allowed(e):
+
+  url_segments = request.path.split('/')
+  resource_id = url_segments[2]
+
+  if (
+        ( isinstance(resource_id, str) ) and 
+        ( 5 <= len(resource_id) <= 20) and
+        ( request.path == url_for('main.view_note', slug=resource_id) )
+     ):
+
+    return redirect( url_for('main.secret', slug=resource_id) )
+
+  else:
+
+    return redirect( url_for('main.index') )
 
 
 
