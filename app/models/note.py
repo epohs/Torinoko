@@ -14,10 +14,8 @@ from cryptography.fernet import Fernet
 class Note(db.Model):
 
   __tablename__ = "notes"
-
-
-  key = gen_fernet_key( Config.SECRET_KEY.encode('utf-8') )
-  fernet = Fernet(key)
+  
+  secret = Config.SECRET_KEY
   
 
   id = db.Column(db.Integer, primary_key=True)
@@ -34,9 +32,29 @@ class Note(db.Model):
 
 
 
-  def __init__(self, content, expires=None):
+  def __init__(self, content, passphrase=None, expires=None):
   
-    self.content = self.fernet.encrypt( bytes(content.encode('utf-8')) )
+    
+
+    print( 'passphrase: ', passphrase )
+    
+    if passphrase:
+    
+      print( 'passphrase (',passphrase,') mixed with secret (', self.secret, ')' )
+    
+      key_seed = self.secret.join( passphrase )
+      
+    else:
+    
+      print( 'no passphrase found' )
+    
+      key_seed = self.secret
+  
+  
+    key = gen_fernet_key( key_seed )
+    fernet = Fernet(key)
+  
+    self.content = fernet.encrypt( bytes(content.encode('utf-8')) )
     self.slug = get_good_slug(self)
     
     self.expires_at = get_expires_at(expires)
@@ -47,7 +65,9 @@ class Note(db.Model):
   @hybrid_property    
   def clean_note(self):
     
-    return self.fernet.decrypt( self.content ).decode('utf-8')
+    return 'encrypted note'
+    
+    #return self.fernet.decrypt( self.content ).decode('utf-8')
 
 
 

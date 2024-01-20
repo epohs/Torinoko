@@ -13,6 +13,9 @@ from functools import partial
 
 # https://stackoverflow.com/questions/44432945/generating-own-key-with-python-fernet
 def gen_fernet_key(passcode:bytes) -> bytes:
+
+  passcode = passcode.encode('utf-8')
+
   assert isinstance(passcode, bytes)
   hlib = hashlib.md5()
   hlib.update(passcode)

@@ -41,7 +41,12 @@ def new_note():
   
     from app.ext import db
 
-    new_note = Note( content=form.new_note.data, expires=form.expires.data )
+    new_note = Note(
+                     content=form.new_note.data,
+                     passphrase=form.passphrase.data,
+                     expires=form.expires.data
+                   )
+                   
     db.session.add(new_note)
     db.session.commit()
     
