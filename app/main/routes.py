@@ -31,7 +31,7 @@ def index():
 @bp.route('/new', methods=['GET', 'POST'])
 def new_note():
 
-  form = NewNoteForm(request.form)
+  form = NewNoteForm()
 
 
   if request.method == 'POST' and form.validate():
