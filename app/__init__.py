@@ -31,8 +31,11 @@ def create_app( config_class=Config ):
 
   # Register blueprints here
   from app.main import bp as main_bp
-
+  from app.main import routes
+  
   app.register_blueprint(main_bp)
+
+	
  
 
   # Disable browser caching if we're in debug mode

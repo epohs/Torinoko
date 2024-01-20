@@ -1,8 +1,8 @@
 from flask import render_template, request, url_for, redirect
 from app.ext import db
 from app.main import bp
+from app.main.forms import NewNoteForm, ViewNoteForm
 from app.models.note import Note
-from app.forms import NewNoteForm, ViewNoteForm
 
 
 
