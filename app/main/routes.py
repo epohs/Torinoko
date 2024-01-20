@@ -1,8 +1,10 @@
 from flask import render_template, request, url_for, redirect
+from sqlalchemy import or_, delete
 from app.ext import db
 from app.main import bp
 from app.main.forms import NewNoteForm, ViewNoteForm
 from app.models.note import Note
+from datetime import datetime
 
 
 
@@ -117,7 +119,7 @@ def view_note(slug):
 
 
 
-# @todo these two routes should be combined
+# @todo these two routes could be combined
 # to use unique URLs, but the same template
 # with the content being passed as a parameter
 # and descriptive of why the user got an error.
@@ -126,10 +128,43 @@ def no_note():
 
   return render_template('no-note.html')
 
+
+
 @bp.route('/new/error')
 def bad_note():
 
   return render_template('invalid-note.html')
+
+
+
+
+
+
+
+
+# Before any page request we are going to purge all expired notes.
+# @internal This may be excessive. It may be more reasonable to
+# only perform this purge when someone is trying to view a note.
+@bp.before_request
+def purge_old_notes():
+  
+  current_timestamp = datetime.now()
+
+  # Query to delete rows with expired timestamps
+  expired_notes = delete(Note).where(
+                                     or_(
+                                          Note.expires_at < current_timestamp,  # Expired notes
+                                          Note.expires_at.is_(None)  # Notes with null expires_at
+                                        )
+                                   )
+
+
+  # Execute the query
+  db.session.execute(expired_notes)
+  db.session.commit()
+
+
+
 
 
 
