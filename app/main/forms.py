@@ -20,7 +20,9 @@ class NewNoteForm(FlaskForm):
             ('604800',  '7 days')
           ]
 
-  expires = SelectField(u'Expires in', choices=expires_choices, default = '86400', coerce=int)
+  # Don't validate choices so that the number of seconds can be altered
+  # within the bounds of the minimum and maximums defined in utils.py
+  expires = SelectField(u'Expires in', choices=expires_choices, default = '86400', coerce=int, validate_choice=False)
 
 
   submit_btn = SubmitField(u'Create note')

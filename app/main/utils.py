@@ -83,3 +83,51 @@ def get_good_slug(model_obj):
 
 
 
+# Calculate an expiration timestamp based on a seconds parameter
+def get_expires_at( seconds=None ):
+
+  from datetime import datetime, timedelta
+
+  # Default to 1 day
+  default_seconds_to_add = 86400
+  
+  # 1 hour
+  min_seconds_to_add = 3600
+  
+  # 7 days
+  max_seconds_to_add = 604800
+  
+
+
+  # Determine whether the seconds fall within our min-max range
+  if ( not isinstance(seconds, int) ):
+  
+    # This shouldn't happen because WTForms won't let a non-INT value
+    # be submitted, but I'll add this for good measure.
+    seconds_to_add = default_seconds_to_add
+  
+  elif ( int(seconds) < min_seconds_to_add ):
+  
+    seconds_to_add = min_seconds_to_add
+    
+  elif ( int(seconds) > max_seconds_to_add ):
+  
+    seconds_to_add = max_seconds_to_add
+    
+  else:
+  
+    # The seconds passed were within the min-max range.
+    # Recast as INT just to be certain.
+    seconds_to_add = int(seconds)
+  
+  
+  # Add the number of seconds to the current timestamp and return.
+  return datetime.now() + timedelta( seconds = seconds_to_add )
+
+
+
+
+
+
+
+
