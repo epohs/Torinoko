@@ -29,7 +29,7 @@ class Note(db.Model):
 
   def __repr__(self):
 
-    return f'<Note "{self.id}">'
+    return f'<Note "{self.slug}">'
 
 
 
