@@ -12,7 +12,7 @@
   <ul>
     <li>id: {{ note.id }}</li>
     <li>slug: {{ note.slug }}</li>
-    <li>{{ note.clean_note }}</li>
+    <li>{{ decrypted_note }}</li>
     <li>created_at: {{ note.created_at.strftime('%a %b %d, %Y %I:%M %p') }}</li>
   </ul>
 

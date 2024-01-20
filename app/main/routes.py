@@ -104,10 +104,37 @@ def view_note(slug):
     
     if note:
     
+      from config import Config
+      from cryptography.fernet import Fernet
+      from app.main.utils import gen_fernet_key
+    
+      secret = Config.SECRET_KEY
+      passphrase = request.form.get('passphrase')
+      
+      
+      if passphrase:
+    
+        print( 'passphrase (',passphrase,') mixed with secret (', secret, ')' )
+    
+        key_seed = secret.join( passphrase )
+      
+      else:
+    
+        print( 'no passphrase found' )
+    
+        key_seed = secret
+  
+  
+      key = gen_fernet_key( key_seed )
+      fernet = Fernet(key)
+      
+      decrypted_note = fernet.decrypt( note.content ).decode('utf-8')
+    
+    
       # Render the template, then delete the note.
       try:
       
-        return render_template('view-note.html', note=note)
+        return render_template('view-note.html', note=note, decrypted_note=decrypted_note)
       
       finally:
       

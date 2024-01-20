@@ -51,7 +51,7 @@
 <ol>
  {% for note in notes %}
  
-  <li>{{note.id}} | <a href="{{ url_for("main.secret", slug=note.slug)}}">{{note.slug}}</a> | {{note.clean_note}}</li>
+  <li>{{note.id}} | <a href="{{ url_for("main.secret", slug=note.slug)}}">{{note.slug}}</a> | {{ note.created_at.strftime('%a %b %d, %Y %I:%M %p') }}</li>
  
  {% endfor %}
 </ol>

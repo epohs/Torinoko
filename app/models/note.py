@@ -36,17 +36,17 @@ class Note(db.Model):
   
     
 
-    print( 'passphrase: ', passphrase )
+    #print( 'passphrase: ', passphrase )
     
     if passphrase:
     
-      print( 'passphrase (',passphrase,') mixed with secret (', self.secret, ')' )
+      #print( 'passphrase (',passphrase,') mixed with secret (', self.secret, ')' )
     
       key_seed = self.secret.join( passphrase )
       
     else:
     
-      print( 'no passphrase found' )
+      #print( 'no passphrase found' )
     
       key_seed = self.secret
   
@@ -58,16 +58,6 @@ class Note(db.Model):
     self.slug = get_good_slug(self)
     
     self.expires_at = get_expires_at(expires)
-
-    
-    
-    
-  @hybrid_property    
-  def clean_note(self):
-    
-    return 'encrypted note'
-    
-    #return self.fernet.decrypt( self.content ).decode('utf-8')
 
 
 
