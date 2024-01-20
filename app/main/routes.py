@@ -10,6 +10,7 @@ from datetime import datetime
 
 
 
+
 @bp.route('/')
 def index():
 
@@ -84,6 +85,7 @@ def secret(slug):
 
 
 
+
 @bp.route('/note/<string:slug>', methods=['POST'])
 def view_note(slug):
 
@@ -116,9 +118,6 @@ def view_note(slug):
 
 
 
-
-
-
 # @todo these two routes could be combined
 # to use unique URLs, but the same template
 # with the content being passed as a parameter
@@ -134,8 +133,6 @@ def no_note():
 def bad_note():
 
   return render_template('invalid-note.html')
-
-
 
 
 
