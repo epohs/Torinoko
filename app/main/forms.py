@@ -9,7 +9,9 @@ from wtforms import validators
 class NewNoteForm(FlaskForm):
 
   new_note = TextAreaField(u'New note', [validators.DataRequired(), validators.Length(max=2500)])
-  passphrase = StringField(u'Passphrase',[validators.Length(max=128, message='Passphrase is 128 characters max')])
+  passphrase = StringField( u'Passphrase',
+                            [validators.Length(max=128, message='Passphrase is 128 characters max')],
+                            render_kw={'autocorrect' : 'off', 'autocapitalize' : 'off'} )
   
   expires_choices=[
             ('3600',   '1 hour'),
@@ -33,6 +35,8 @@ class NewNoteForm(FlaskForm):
 class ViewNoteForm(FlaskForm):
 
   note_slug = HiddenField(u'Slug')
-  passphrase = StringField(u'Passphrase',[validators.Length(max=128, message='Passphrase is 128 characters max')])
+  passphrase = StringField( u'Passphrase',
+                            [validators.Length(max=128, message='Passphrase is 128 characters max')],
+                            render_kw={'autocorrect' : 'off', 'autocapitalize' : 'off'} )
 
   submit_btn = SubmitField(u'View note')
