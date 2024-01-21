@@ -11,6 +11,8 @@ from datetime import datetime
 
 
 
+
+
 @bp.route('/')
 def index():
 
@@ -25,6 +27,8 @@ def index():
 
 
   return render_template('index.html', form=form, notes=notes)
+
+
 
 
 
@@ -64,6 +68,8 @@ def new_note():
 
 
 
+
+
 @bp.route('/secret/<string:slug>')
 def secret(slug):
 
@@ -91,6 +97,8 @@ def secret(slug):
     else:
     
       return redirect(url_for('main.no_note'))
+
+
 
 
 
@@ -167,7 +175,9 @@ def view_note(slug):
 
 
 
-# @todo these two routes could be combined
+
+
+# @internal these two routes could be combined
 # to use unique URLs, but the same template
 # with the content being passed as a parameter
 # and descriptive of why the user got an error.
@@ -182,6 +192,8 @@ def no_note():
 def bad_note():
 
   return render_template('invalid-note.html')
+
+
 
 
 
@@ -218,7 +230,13 @@ def purge_old_notes():
 
 
 
-
+# Handle method not allowed errors.
+# The most common reason for this error is a direct hit to the
+# view_note route, which only accepts POST requests.
+# In those cases we won't know if the note slug is valid, but
+# we don't need to.  Just test whether the URL segment looks like
+# a slug, and if it does redirect to the secret page. Let that
+# route handle the note lookup.
 @bp.app_errorhandler(405)
 def method_not_allowed(e):
 
