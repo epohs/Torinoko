@@ -79,8 +79,14 @@ def secret(slug):
     if note:
     
       form = ViewNoteForm(request.form, note_slug=slug)
+      
+      errors = { 'remaining_attempts' : None }
+      
+      if note.bad_view_count:
+      
+        errors['remaining_attempts'] = str(5 - note.bad_view_count) + ' remaining attempts'
     
-      return render_template('secret.html', slug=slug, form=form)
+      return render_template('secret.html', slug=slug, form=form, errors=errors)
       
     else:
     
