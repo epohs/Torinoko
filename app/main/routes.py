@@ -105,7 +105,7 @@ def view_note(slug):
     if note:
     
       from config import Config
-      from cryptography.fernet import Fernet
+      from cryptography.fernet import Fernet, InvalidToken
       from app.main.utils import gen_fernet_key
     
       secret = Config.SECRET_KEY
@@ -126,9 +126,17 @@ def view_note(slug):
   
   
       key = gen_fernet_key( key_seed )
-      fernet = Fernet(key)
+
+
+      try:
+        
+        fernet = Fernet(key)
+        decrypted_note = fernet.decrypt( note.content ).decode('utf-8')
+    
+      except (InvalidToken, TypeError):
+
+        return redirect( url_for('main.secret', slug=slug) )
       
-      decrypted_note = fernet.decrypt( note.content ).decode('utf-8')
     
     
       # Render the template, then delete the note.
@@ -143,7 +151,7 @@ def view_note(slug):
       
     else:
     
-      return redirect(url_for('main.no_note'))
+      return redirect( url_for('main.no_note') )
 
 
 
