@@ -14,7 +14,7 @@ class NewNoteForm(FlaskForm):
   new_note = TextAreaField(u'New note', [validators.DataRequired(), validators.Length(max=2500)])
   passphrase = StringField( u'Passphrase',
                             [validators.Length(max=128, message='Passphrase is 128 characters max')],
-                            render_kw={'autocorrect' : 'off', 'autocapitalize' : 'off'} )
+                            render_kw={'autocorrect' : 'off', 'autocapitalize' : 'off', 'autocomplete' : 'off'} )
   
   expires_choices=[
             ('3600',   '1 hour'),
