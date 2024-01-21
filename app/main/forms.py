@@ -6,6 +6,9 @@ from wtforms import validators
 
 
 
+
+
+
 class NewNoteForm(FlaskForm):
 
   new_note = TextAreaField(u'New note', [validators.DataRequired(), validators.Length(max=2500)])
@@ -28,6 +31,10 @@ class NewNoteForm(FlaskForm):
 
 
   submit_btn = SubmitField(u'Create note')
+
+
+
+
 
 
 
