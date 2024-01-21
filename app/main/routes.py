@@ -200,7 +200,8 @@ def purge_old_notes():
   expired_notes = delete(Note).where(
                                      or_(
                                           Note.expires_at < current_timestamp,  # Expired notes
-                                          Note.expires_at.is_(None)  # Notes with null expires_at
+                                          Note.expires_at.is_(None),            # Notes with null expires_at
+                                          Note.bad_view_count >= 5              # Too many bad passphrase attempts
                                         )
                                    )
 
