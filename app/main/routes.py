@@ -114,13 +114,9 @@ def view_note(slug):
       
       if passphrase:
     
-        print( 'passphrase (',passphrase,') mixed with secret (', secret, ')' )
-    
         key_seed = secret.join( passphrase )
       
       else:
-    
-        print( 'no passphrase found' )
     
         key_seed = secret
   
@@ -128,12 +124,19 @@ def view_note(slug):
       key = gen_fernet_key( key_seed )
 
 
+
+      # Try to decrypt our note.
+      # If the passphrase is incorrect, increment the counter and redirect
+      # back to the secret page.
       try:
         
         fernet = Fernet(key)
         decrypted_note = fernet.decrypt( note.content ).decode('utf-8')
     
       except (InvalidToken, TypeError):
+
+        note.bad_view_count += 1
+        db.session.commit()
 
         return redirect( url_for('main.secret', slug=slug) )
       

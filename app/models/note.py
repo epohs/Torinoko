@@ -22,6 +22,7 @@ class Note(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   content = db.Column(db.Text, nullable=True, unique=False)
   slug = db.Column(db.Text, nullable=False, unique=True)
+  bad_view_count = db.Column(db.Integer, default=0)
   created_at = db.Column(db.DateTime(timezone=True), default=datetime.now)
   expires_at = db.Column(db.DateTime(timezone=True), default=datetime.now)
 
