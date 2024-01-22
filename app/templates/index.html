@@ -8,6 +8,7 @@
 
 <h1 class="page-heading">Create a new note</h1>
 
+<p class="page-description">Notes are encrypted. Using a passphrase means that no one will be able to read your note without that passphrase. Your note will be deleted forever when it expires.</p>
 
 
 <form action="{{ url_for('main.new_note') }}" method="post" class="form form-new-note">
@@ -52,6 +53,8 @@
 
 
 
+{% if notes %}
+
 <hr>
 
 
@@ -65,4 +68,7 @@
  {% endfor %}
 </ol>
 
+{% endif %}
+
 {% endblock %}
+

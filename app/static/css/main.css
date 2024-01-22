@@ -79,6 +79,22 @@ select {
 
 /* Page Structure */
 
+.page-header {
+  display: block;
+  max-width: 95em;
+  margin: 0 auto;
+  padding: 0.5em 2em;
+}
+
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  max-width: 60em;
+  margin: 0 auto;
+}
+
 .page-body {
   max-width: 40em;
   padding: 1em 3em;
@@ -94,12 +110,41 @@ select {
 
 
 
+/* Page content */
+
+.page-nav .home {
+  font-family: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif;
+  color: #fff;
+  font-weight: 100;
+  text-decoration: none;
+}
+
+.page-nav .home:hover {
+  color: #ffce00;
+}
+
+.page-nav .github {
+  width: 1.5em;
+}
+
+.page-nav .github .svg {
+  width: 100%;
+  fill: #fff;
+}
+
+.page-nav .github:hover .svg {
+  fill: #ffce00;
+}
 
 .page-heading {
   margin-bottom: 1em;
   font-family: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif;
   font-weight: 400;
   color: #f7eac5;
+}
+
+.page-description {
+  font-size: 0.75em;
 }
 
 .btn-primary {
