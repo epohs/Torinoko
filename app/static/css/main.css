@@ -199,11 +199,16 @@ select {
   max-height: 45em;
 }
 
+.note-share-url {
+  overflow: hidden;
+}
+
 .note-share-url .summary {
   display: flex;
   align-items: center;
   font-size: 0.7em;
   text-transform: uppercase;
+  cursor: pointer;
 }
 
 .note-share-url .summary::marker,
