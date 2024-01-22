@@ -231,6 +231,28 @@ select {
 }
 
 
+.field-wrap.field-passphrase .passphrase-char-count {
+  display: block;
+  max-height: 0;
+  margin-top: 0.35em;
+  transition: max-height 0.5s ease-in-out;
+  font-size: 0.5em;
+  font-family: monospace, sans-serif;
+  letter-spacing: 0.035em;
+  overflow: hidden;
+}
+
+.field-wrap.field-passphrase .passphrase-char-count .sep {
+  margin: 0 0.25em;
+}
+
+
+.field-wrap.field-passphrase .note-passphrase.active ~ .passphrase-char-count {
+  max-height: 2em;
+}
+
+
+
 .field-wrap.field-expires {
   display: flex;
   align-items: center;
