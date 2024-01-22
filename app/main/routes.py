@@ -214,12 +214,12 @@ def purge_old_notes():
 
   # Query to delete rows with expired timestamps
   expired_notes = delete(Note).where(
-                                     or_(
-                                          Note.expires_at < current_timestamp,  # Expired notes
-                                          Note.expires_at.is_(None),            # Notes with null expires_at
-                                          Note.bad_view_count >= 5              # Too many bad passphrase attempts
-                                        )
-                                   )
+                                      or_(
+                                           Note.expires_at < current_timestamp,  # Expired notes
+                                           Note.expires_at.is_(None),            # Notes with null expires_at
+                                           Note.bad_view_count >= 5              # Too many bad passphrase attempts
+                                         )
+                                    )
 
 
   # Execute the query
