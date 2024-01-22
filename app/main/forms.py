@@ -44,6 +44,6 @@ class ViewNoteForm(FlaskForm):
   note_slug = HiddenField(u'Slug')
   passphrase = StringField( u'Passphrase',
                             [validators.Length(max=128, message='Passphrase is 128 characters max')],
-                            render_kw={'autocorrect' : 'off', 'autocapitalize' : 'off'} )
+                            render_kw={'autocorrect' : 'off', 'autocapitalize' : 'off', 'autocomplete' : 'off'} )
 
   submit_btn = SubmitField(u'View note')
