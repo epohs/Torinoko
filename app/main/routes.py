@@ -89,8 +89,12 @@ def secret(slug):
       errors = { 'remaining_attempts' : None }
       
       if note.bad_view_count:
+        
+        num_remaining = 5 - int(note.bad_view_count)
+        
+        num_remaining_msg = f'{num_remaining} remaining attempt{"" if num_remaining == 1 else "s"}'
       
-        errors['remaining_attempts'] = str(5 - note.bad_view_count) + ' remaining attempts'
+        errors['remaining_attempts'] = num_remaining_msg
     
       return render_template('secret.html', slug=slug, form=form, errors=errors)
       
