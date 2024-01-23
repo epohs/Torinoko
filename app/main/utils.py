@@ -49,6 +49,8 @@ def produce_slugs(amount_of_keys, _randint=np.random.randint):
 
 # Take a list of potential slugs, check the database to make sure the
 # slug is not already in use and return the first free one.
+# @todo This should look for shorter slugs first, then longer slugs a couple 
+# of times before we give up.
 def get_good_slug(model_obj):
   
   slugs = produce_slugs(15)
