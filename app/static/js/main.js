@@ -32,10 +32,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   
-  
+
+  // If the share url details element exists on this page  
   if ( share_url_details ) {
   
-    view_note_secret()
+    // Open it by default.
+    open_share_url();
+    
+    
+    const share_url = share_url_details.querySelector('.url');
+
+    // Select all text when we click the URL field.
+    share_url.addEventListener('click', () => {
+    
+        share_url.select();
+        
+    });
   
   }
 
@@ -93,7 +105,7 @@ function on_new_note_submit() {
 // to true we assume the just created a new note, so
 // we default the share url to open.
 // Otherwise the share url defaults to closed.
-function view_note_secret() {
+function open_share_url() {
 
   const created_new_note = localStorage.getItem("created_new_note");
 
@@ -115,7 +127,7 @@ function view_note_secret() {
   // Delete the flag from local storage
   localStorage.removeItem("created_new_note");
 
-}
+}// open_share_url()
 
 
 
