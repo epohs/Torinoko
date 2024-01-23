@@ -83,7 +83,7 @@ select {
   display: block;
   max-width: 95em;
   margin: 0 auto;
-  padding: 0.5em 4.5em;
+  padding: 1rem 3rem;
 }
 
 .page-nav {
@@ -96,8 +96,8 @@ select {
 }
 
 .page-body {
-  max-width: 40em;
-  padding: 1em 3em;
+  max-width: 38em;
+  padding: 1rem 3rem;
   margin: 3em auto;
   font-size: 1.5em;
 }
