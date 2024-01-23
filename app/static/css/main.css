@@ -98,7 +98,7 @@ select {
 .page-body {
   max-width: 38em;
   padding: 1rem 3rem;
-  margin: 3em auto;
+  margin: 2em auto 3em auto;
   font-size: 1.5em;
 }
 
