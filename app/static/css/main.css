@@ -51,6 +51,7 @@ textarea {
   letter-spacing: 0.025em;
   border: none;
   border-radius: 0.25em;
+  background-color: #fff;
   box-sizing: border-box;
 }
 
