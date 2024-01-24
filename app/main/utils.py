@@ -102,6 +102,12 @@ def get_good_slug(model_obj):
     return good_slug
     
   else:
+    
+    # !!! Remember !!!!!!!!!!!!!!!!!!
+    # @todo After we've converted this to loop through batches of slugs
+    # we want to return None if a good slug is not found.
+    # !!! Remember !!!!!!!!!!!!!!!!!!
+  
 
     # If all of the slugs we tried were already in use
     # call the function recursively.

@@ -1,5 +1,6 @@
 from flask import render_template, request, url_for, redirect
 from sqlalchemy import or_, delete
+from sqlalchemy.exc import IntegrityError
 from app.ext import db
 from app.main import bp
 from app.main.forms import NewNoteForm, ViewNoteForm
@@ -45,14 +46,28 @@ def new_note():
   
     from app.ext import db
 
-    new_note = Note(
-                     content=form.new_note.data,
-                     passphrase=form.passphrase.data,
-                     expires=form.expires.data
-                   )
-                   
-    db.session.add(new_note)
-    db.session.commit()
+
+
+    try:
+
+      new_note = Note(
+                       content=form.new_note.data,
+                       passphrase=form.passphrase.data,
+                       expires=form.expires.data
+                     )
+      
+      db.session.add(new_note)
+      db.session.flush()
+
+    except IntegrityError:
+
+      db.session.rollback()
+
+    else:
+
+      db.session.commit()
+
+    
     
     just_added_note = Note.query.get(new_note.id)
     
