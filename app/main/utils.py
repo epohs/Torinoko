@@ -28,7 +28,11 @@ def gen_fernet_key(passcode:bytes) -> bytes:
 
 
 # Create a number of potential random strings to be used as note slugs
-def produce_slugs(amount_of_keys, _randint=np.random.randint):
+def produce_slugs(amount_of_keys, min_max=None, _randint=np.random.randint):
+  
+  if min_max is None:
+    
+    min_max = { 'min':5, 'max':20 }
   
   keys = set()
   
@@ -37,7 +41,7 @@ def produce_slugs(amount_of_keys, _randint=np.random.randint):
     np.array(list(string.ascii_lowercase + string.ascii_uppercase + string.digits)))
     
   while len(keys) < amount_of_keys:
-    keys |= {''.join([pickchar() for _ in range(_randint(5, 20))]) for _ in range(amount_of_keys - len(keys))}
+    keys |= {''.join([pickchar() for _ in range( _randint(min_max['min'], min_max['max']) )]) for _ in range(amount_of_keys - len(keys))}
 
   return keys
 
@@ -53,6 +57,26 @@ def produce_slugs(amount_of_keys, _randint=np.random.randint):
 # of times before we give up.
 def get_good_slug(model_obj):
   
+  
+  # Each dictionary in this list represents one batch of slugs.
+  # min/max refers to the lengths of the slugs in each batch.
+  slug_ranges = [
+                  { 'min':5, 'max':7 },
+                  { 'min':8, 'max':12 },
+                  { 'min':13, 'max':20 }
+                ]
+                
+  # Loop through each batch.
+  # We start with the shorter slugs just to have a nicer URL,
+  # getting longer as we go to reduce the risk of collision.
+  for i in range( len(slug_ranges) ):
+  
+    slug_range = slug_ranges[i]
+    
+    print( slug_range )
+  
+  
+  # We pull 15 slugs for each batch
   slugs = produce_slugs(15)
 
   good_slug = None
