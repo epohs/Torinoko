@@ -56,7 +56,15 @@ def new_note():
     
     just_added_note = Note.query.get(new_note.id)
     
-    return redirect(url_for('main.secret', slug=just_added_note.slug))
+    if just_added_note:
+    
+      return redirect(url_for('main.secret', slug=just_added_note.slug))
+      
+    else:
+      
+      # The most likely cause of this to happening would be
+      # a conflict with all of the slugs we tried to use.
+      return redirect(url_for('main.bad_note'))
 
   else:
   
