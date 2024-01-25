@@ -28,7 +28,7 @@ def index():
   # https://pypi.org/project/wonderwords/
 
 
-  return render_template('index.html', form=form, notes=notes)
+  return render_template('index.html', form=form)
 
 
 
