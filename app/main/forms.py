@@ -11,7 +11,9 @@ from wtforms import validators
 
 class NewNoteForm(FlaskForm):
 
-  new_note = TextAreaField(u'New note', [validators.DataRequired(), validators.Length(max=2500)])
+  new_note = TextAreaField(u'New note', [validators.DataRequired(), validators.Length(max=2500)],
+                            render_kw={'autocorrect' : 'off', 'autocapitalize' : 'off'})
+  
   passphrase = StringField( u'Passphrase',
                             [validators.Length(max=128, message='Passphrase is 128 characters max')],
                             render_kw={'autocorrect' : 'off', 'autocapitalize' : 'off', 'autocomplete' : 'off'} )
