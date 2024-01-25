@@ -4,27 +4,27 @@
 
 {% block content %}
 
-<h1 class="page-heading">Your note</h1>
 
-
-{% if note %}
-
-
-  <p class="field-wrap field-content">
+  <h1 class="page-heading">Your note</h1>  
   
-    <textarea class="field-input note-content view-note" name="view_note">{{ decrypted_note }}</textarea>
+
+  {% if note %}
     
-  </p>
+    <p class="field-wrap field-content">
+    
+      <textarea class="field-input note-content view-note" name="view_note">{{ decrypted_note }}</textarea>
+      
+    </p>
+    
+    <p>This note has now been removed. If you leave or refresh the page you won't be able to see it again.</p>
+    
+    <p><a href="{{ url_for('main.index') }}" class="new-note-link">Make a new secret note</a>.</p>
   
-  <p>This note has now been removed. If you leave or refresh the page you won't be able to see it again.</p>
+  {% else %}
   
-  <p><a href="{{ url_for('main.index') }}" class="new-note-link">Make a new secret note</a>.</p>
-
-{% else %}
-
-  <p>This isn't supposed to happen but this note doesn't exist</p>
-
-{% endif %}
+    <p>This isn't supposed to happen but this note doesn't exist</p>
+  
+  {% endif %}
 
 
 
