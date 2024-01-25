@@ -8,6 +8,7 @@
 
 <h1 class="page-heading">Create a new note</h1>
 
+
 <p class="page-description">Notes are encrypted. Using a passphrase means that no one will be able to read your note without that passphrase. Your note will be deleted forever when it is viewed, or it expires.</p>
 
 
@@ -49,27 +50,3 @@
   <p class="field-wrap field-submit">{{ form.submit_btn(class_="btn btn-primary submit-btn") }}</p>
 
 </form>
-
-
-
-
-
-{% if notes %}
-
-<hr>
-
-
-<h3>All notes</h3>
-
-<ol>
- {% for note in notes %}
- 
-  <li>{{note.id}} | <a href="{{ url_for("main.secret", slug=note.slug)}}">{{note.slug}}</a> | {{ note.created_at.strftime('%a %b %d, %Y %I:%M %p') }}</li>
- 
- {% endfor %}
-</ol>
-
-{% endif %}
-
-{% endblock %}
-
