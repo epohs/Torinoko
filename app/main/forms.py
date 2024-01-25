@@ -22,13 +22,13 @@ class NewNoteForm(FlaskForm):
                             render_kw={'autocorrect' : 'off', 'autocapitalize' : 'off', 'autocomplete' : 'off'} )
   
   expires_choices=[
-            ('3600',   '1 hour'),
-            ('10800',  '3 hours'),
-            ('43200',  '12 hours'),
-            ('86400',  '1 day'),
-            ('259200', '3 days'),
-            ('604800',  '7 days')
-          ]
+                    ('3600',   '1 hour'),
+                    ('10800',  '3 hours'),
+                    ('43200',  '12 hours'),
+                    ('86400',  '1 day'),
+                    ('259200', '3 days'),
+                    ('604800',  '7 days')
+                  ]
 
   # Don't validate choices so that the number of seconds can be altered
   # within the bounds of the minimum and maximums defined in utils.py
