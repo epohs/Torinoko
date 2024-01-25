@@ -16,15 +16,18 @@
 
   {{ form.csrf_token }}
 
+
   <p class="field-wrap field-content">
     {{ form.new_note(class_="field-input note-content") }}
   </p>
+
   
   <p class="field-wrap field-passphrase">
     {{ form.passphrase.label(class_="field-label") }}
     {{ form.passphrase(class_="field-input note-passphrase has-counter", placeholder="This will increase security") }}
     <span class="field-meta passphrase-char-count"><span class="cur-chars">0</span><span class="sep">/</span><span class="max-chars">128</span></span>
   </p>
+
   
   <p class="field-wrap field-expires">
     {{ form.expires.label(class_="field-label") }}
@@ -50,3 +53,8 @@
   <p class="field-wrap field-submit">{{ form.submit_btn(class_="btn btn-primary submit-btn") }}</p>
 
 </form>
+
+
+
+{% endblock %}
+
