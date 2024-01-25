@@ -53,8 +53,6 @@ def produce_slugs(amount_of_keys, min_max=None, _randint=np.random.randint):
 
 # Take a list of potential slugs, check the database to make sure the
 # slug is not already in use and return the first free one.
-# @todo This should look for shorter slugs first, then longer slugs a couple 
-# of times before we give up.
 def get_good_slug(model_obj):
   
   
@@ -71,48 +69,43 @@ def get_good_slug(model_obj):
   # getting longer as we go to reduce the risk of collision.
   for i in range( len(slug_ranges) ):
   
+  
     slug_range = slug_ranges[i]
     
-    print( slug_range )
+  
+    # We pull 15 slugs for each batch
+    slugs = produce_slugs(15, slug_range)
+  
+    good_slug = None
   
   
-  # We pull 15 slugs for each batch
-  slugs = produce_slugs(15)
-
-  good_slug = None
-
-
-  # Loop through our random slugs checking for the first slug
-  # that doesn't already exist in the database
-  for slug in slugs:
-
-    found_row = model_obj.query.filter_by( slug=slug ).first()
-
-    if not found_row:
-
-      good_slug = slug
-
-      break
+    # Loop through our random slugs checking for the first slug
+    # that doesn't already exist in the database
+    for slug in slugs:
   
-  # If we have a good slug and a valid form
-  # we're ready to create a new note.
-  # Otherwise, something weird wend wrong
-  if good_slug:
+      found_row = model_obj.query.filter_by( slug=slug ).first()
   
-    return good_slug
+      if not found_row:
+  
+        good_slug = slug
+  
+        break
     
-  else:
+    # If we have a good slug and a valid form
+    # we're ready to create a new note.
+    # Otherwise, something weird wend wrong
+    if good_slug:
     
-    # !!! Remember !!!!!!!!!!!!!!!!!!
-    # @todo After we've converted this to loop through batches of slugs
-    # we want to return None if a good slug is not found.
-    # !!! Remember !!!!!!!!!!!!!!!!!!
-  
+      return good_slug
 
-    # If all of the slugs we tried were already in use
-    # call the function recursively.
-    # @todo Add some checks so that this doesn't run away.
-    get_good_slug()
+
+
+  # If we reach this point we have looped through all of our batches
+  # of slugs and not found an unused slug.
+  return None
+
+
+
 
 
 
