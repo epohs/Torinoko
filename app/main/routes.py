@@ -16,6 +16,10 @@ from datetime import datetime
 
 @bp.route('/')
 def index():
+  """
+  This route doubles as the homepage and the
+  create a new note page.
+  """
 
   form = NewNoteForm()
 
@@ -38,6 +42,12 @@ def index():
 
 @bp.route('/new', methods=['GET', 'POST'])
 def new_note():
+  """
+  Non-public route, used only to POST new note data to.
+  
+  If the data posted to this route is valid in handles creating the note
+  and redirecting to the view note route.
+  """
 
   form = NewNoteForm()
 
@@ -95,6 +105,14 @@ def new_note():
 
 @bp.route('/secret/<string:slug>')
 def secret(slug):
+  """
+  This is the URL that will be shared to the note recipient.
+  
+  It is  where you will land after creating a new note.
+  
+  This page contains the form for entering the passphrase and viewing
+  the note, and the share URL field for sharing the note.
+  """
 
 
   if not isinstance(slug, str) or len(slug) < 5:
@@ -134,13 +152,18 @@ def secret(slug):
 
 @bp.route('/note/<string:slug>', methods=['POST'])
 def view_note(slug):
+  """
+  Route for viewing a decrypted note.
+  """
 
-  if not isinstance(slug, str) or len(slug) < 5:
+
+  if not isinstance(slug, str) or len(slug) < 5 or len(slug) > 20:
   
     return redirect(url_for('main.no_note'))
     
   else:
   
+    # Query the database to see if we have a note with this slug
     note = Note.query.filter_by( slug=slug ).first()
     
     if note:
@@ -153,6 +176,8 @@ def view_note(slug):
       passphrase = request.form.get('passphrase')
       
       
+      # If we have a passphrase use it together with the app's secret
+      # to decrypt our note
       if passphrase:
     
         key_seed = secret.join( passphrase )
@@ -167,8 +192,8 @@ def view_note(slug):
 
 
       # Try to decrypt our note.
-      # If the passphrase is incorrect, increment the counter and redirect
-      # back to the secret page.
+      # If the passphrase is incorrect, increment the bad_view counter
+      # and redirect back to the secret page.
       try:
         
         fernet = Fernet(key)
@@ -210,6 +235,9 @@ def view_note(slug):
 # and descriptive of why the user got an error.
 @bp.route('/no-note')
 def no_note():
+  """
+  Error page used mainly when a note's slug has expired.
+  """
 
   return render_template('no-note.html')
 
@@ -217,7 +245,14 @@ def no_note():
 
 @bp.route('/new/error')
 def bad_note():
-
+  """
+  Error page that a visitor will land on if the data from
+  the new note form was invalid.
+  
+  This should be rare, given that WTForms will force form validation
+  before submission.
+  """
+  
   return render_template('invalid-note.html')
 
 
@@ -227,11 +262,14 @@ def bad_note():
 
 
 
-# Before any page request we are going to purge all expired notes.
+
 # @internal This may be excessive. It may be more reasonable to
 # only perform this purge when someone is trying to view a note.
 @bp.before_request
 def purge_old_notes():
+  """
+  Before any page request we are going to purge all expired notes.
+  """
   
   current_timestamp = datetime.now()
 
@@ -257,15 +295,20 @@ def purge_old_notes():
 
 
 
-# Handle method not allowed errors.
-# The most common reason for this error is a direct hit to the
-# view_note route, which only accepts POST requests.
-# In those cases we won't know if the note slug is valid, but
-# we don't need to.  Just test whether the URL segment looks like
-# a slug, and if it does redirect to the secret page. Let that
-# route handle the note lookup.
+
 @bp.app_errorhandler(405)
 def method_not_allowed(e):
+  """
+  Handle 'method not allowed' errors.
+  
+  The most common reason for this error is a direct hit to the
+  view_note route, which only accepts POST requests.
+  
+  In those cases we won't know if the note slug is valid, but
+  we don't need to.  We'll ust test whether the URL segment looks like
+  a slug, and if it does redirect to the secret page. Let that
+  route handle the note lookup.
+  """
 
   url_segments = request.path.split('/')
   resource_id = url_segments[2]

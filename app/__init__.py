@@ -8,6 +8,11 @@ from app.ext import db
 
 def create_app( config_class=Config ):
 
+  """
+  This is the core of the entire app.
+  All initialization begins here.
+  """
+
   app = Flask(__name__)
   app.config.from_object(config_class)
 
@@ -45,4 +50,5 @@ def create_app( config_class=Config ):
 
       return r
 
+  # Return the app object to be used globally
   return app

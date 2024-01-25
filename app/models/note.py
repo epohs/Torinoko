@@ -13,6 +13,9 @@ from cryptography.fernet import Fernet
 
 
 class Note(db.Model):
+  """
+  Define the database structure, and formatting rules for our notes.
+  """
 
   __tablename__ = "notes"
   
@@ -27,16 +30,23 @@ class Note(db.Model):
   expires_at = db.Column(db.DateTime(timezone=True), default=datetime.now)
 
 
-
+  
   def __repr__(self):
+    """
+    Notes are identified by their slug.
+    """
 
     return f'<Note "{self.slug}">'
 
 
-
+  
   def __init__(self, content, passphrase=None, expires=None):
+    """
+    Set some rules and default values for how our notes must formatted.
+    """
   
     
+    # If we have a passphrase, include it when encrypting the note.
     if passphrase:
     
       key_seed = self.secret.join( passphrase )
@@ -46,8 +56,10 @@ class Note(db.Model):
       key_seed = self.secret
   
   
+    # Get the encryption token
     key = gen_fernet_key( key_seed )
     fernet = Fernet(key)
+  
   
     self.content = fernet.encrypt( bytes(content.encode('utf-8')) )
     self.slug = get_good_slug(self)

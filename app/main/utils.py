@@ -11,14 +11,21 @@ from functools import partial
 
 
 
-# https://stackoverflow.com/questions/44432945/generating-own-key-with-python-fernet
 def gen_fernet_key(passcode:bytes) -> bytes:
-
+  """
+  Accepts a string and returns a byte-like object to be used
+  in the creation of a Fernet token to encrypt our notes.
+  
+  https://stackoverflow.com/questions/44432945/generating-own-key-with-python-fernet
+  """
+  
   passcode = passcode.encode('utf-8')
 
   assert isinstance(passcode, bytes)
+  
   hlib = hashlib.md5()
   hlib.update(passcode)
+  
   return base64.urlsafe_b64encode(hlib.hexdigest().encode('latin-1'))
 
 
@@ -27,9 +34,11 @@ def gen_fernet_key(passcode:bytes) -> bytes:
 
 
 
-# Create a number of potential random strings to be used as note slugs
 def produce_slugs(amount_of_keys, min_max=None, _randint=np.random.randint):
-  
+  """
+  Create a number of potential random strings to be used as note slugs.
+  """
+    
   if min_max is None:
     
     min_max = { 'min':5, 'max':20 }
@@ -51,10 +60,12 @@ def produce_slugs(amount_of_keys, min_max=None, _randint=np.random.randint):
 
 
 
-# Take a list of potential slugs, check the database to make sure the
-# slug is not already in use and return the first free one.
+
 def get_good_slug(model_obj):
-  
+  """
+  Take a list of potential slugs, check the database to make sure the
+  slug is not already in use and return the first free one.
+  """  
   
   # Each dictionary in this list represents one batch of slugs.
   # min/max refers to the lengths of the slugs in each batch.
@@ -111,9 +122,12 @@ def get_good_slug(model_obj):
 
 
 
-# Calculate an expiration timestamp based on a seconds parameter
-def get_expires_at( seconds=None ):
 
+def get_expires_at( seconds=None ):
+  """
+  Calculate an expiration timestamp based on a seconds parameter
+  """
+  
   from datetime import datetime, timedelta
 
   # Default to 1 day
@@ -145,6 +159,7 @@ def get_expires_at( seconds=None ):
   else:
   
     # The seconds passed were within the min-max range.
+    # We will use what was passed as the expiration for this note.
     # Recast as INT just to be certain.
     seconds_to_add = int(seconds)
   
