@@ -40,10 +40,10 @@ def index():
 @bp.route('/new', methods=['GET', 'POST'])
 def new_note():
   """
-  Non-public route, used only to POST new note data to.
+  Non-public route, used only as a receiver for new note POST data.
   
-  If the data posted to this route is valid in handles creating the note
-  and redirecting to the view note route.
+  If the data posted to this route is valid it will handle creating
+  the note and redirecting to the view note route.
   """
 
   form = NewNoteForm()
@@ -80,11 +80,13 @@ def new_note():
     
     if just_added_note:
     
+      # A new note was created. Go to the secret/share page.
       return redirect(url_for('main.secret', slug=just_added_note.slug))
       
     else:
       
-      # The most likely cause of this to happening would be
+      # Creating the new note failed.
+      # The most likely cause of this happening would be
       # a conflict with all of the slugs we tried to use.
       return redirect(url_for('main.bad_note'))
 
@@ -112,7 +114,7 @@ def secret(slug):
   """
 
 
-  if not isinstance(slug, str) or len(slug) < 5:
+  if not isinstance(slug, str) or len(slug) < 5 or len(slug) > 20:
   
     return redirect(url_for('main.no_note'))
     
@@ -174,7 +176,7 @@ def view_note(slug):
       
       
       # If we have a passphrase use it together with the app's secret
-      # to decrypt our note
+      # to decrypt our note.
       if passphrase:
     
         key_seed = secret.join( passphrase )
@@ -316,10 +318,12 @@ def method_not_allowed(e):
         ( request.path == url_for('main.view_note', slug=resource_id) )
      ):
 
+    # If the slug looks like it could be valid just send it to the secret route.
     return redirect( url_for('main.secret', slug=resource_id) )
 
   else:
 
+    # If the slug in the url looks invalid just pack up and go home.
     return redirect( url_for('main.index') )
 
 
