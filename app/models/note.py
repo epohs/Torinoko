@@ -37,18 +37,11 @@ class Note(db.Model):
   def __init__(self, content, passphrase=None, expires=None):
   
     
-
-    #print( 'passphrase: ', passphrase )
-    
     if passphrase:
-    
-      #print( 'passphrase (',passphrase,') mixed with secret (', self.secret, ')' )
     
       key_seed = self.secret.join( passphrase )
       
     else:
-    
-      #print( 'no passphrase found' )
     
       key_seed = self.secret
   
