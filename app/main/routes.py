@@ -43,9 +43,9 @@ def new_note():
 
 
   if request.method == 'POST' and form.validate():
+
   
     from app.ext import db
-
 
 
     try:
@@ -69,7 +69,7 @@ def new_note():
 
     
     
-    just_added_note = Note.query.get(new_note.id)
+    just_added_note = Note.query.get( new_note.id )
     
     if just_added_note:
     
