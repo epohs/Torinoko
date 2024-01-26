@@ -12,7 +12,6 @@ This project takes most of it's inspiration from [Onetimesecret](https://onetime
 ## Basic Requirements
 
 * [Python 3.8](https://www.python.org)
-* [Flask](https://flask.palletsprojects.com)
 * [Sqlite 3](https://sqlite.org)
 
 
