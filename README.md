@@ -34,4 +34,5 @@ Todo: Add a more detailed walkthrough of setting up Nginx and Gunicorn on a rasp
 ## To-do
 
  * Make min and max slug lengths config variables.
+ * Add rate limitting.
  * Switch encryption method to AES_GCM.
