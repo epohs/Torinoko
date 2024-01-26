@@ -3,12 +3,21 @@
 ## Lightweight encrypted note sharing tool
 
 
+* [Requirements](#basic-requirements)
 * [Quick Install](#quick-install)
 * [To-do](#to-do)
+
 
 Create an ecrypted note with a unique URL to share with someone else. Each note has an expiration date, and an optional passphrase. All notes are enrypted in the database. If you use a passphrase the note will not be able to be read without knowing that passphrase, even with direct access to the database.
 
 This project takes most of it's inspiration from [Onetimesecret](https://onetimesecret.com).
+
+
+## Basic Requirements
+
+* [Python 3.8](https://www.python.org)
+* [Flask](https://flask.palletsprojects.com)
+* [Sqlite 3](https://sqlite.org)
 
 
 ## Quick install
@@ -19,7 +28,7 @@ This project takes most of it's inspiration from [Onetimesecret](https://onetime
 * Switch to the virtual environment `source .venv/bin/activate`.
 * Install requirements `pip install -r requirements.txt`.
 * Create config.py. Use config-sample.py as a guide.
-* Run the project in debug mode with `flask --debug run`
+* Run the project in debug mode with `flask --debug run`.
 
 
 ## To-do
