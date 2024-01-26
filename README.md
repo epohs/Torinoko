@@ -19,6 +19,7 @@ This project takes most of it's inspiration from [Onetimesecret](https://onetime
 * Switch to the virtual environment `source .venv/bin/activate`.
 * Install requirements `pip install -r requirements.txt`.
 * Create config.py. Use config-sample.py as a guide.
+* Run the project in debug mode with `flask --debug run`
 
 
 ## To-do
