@@ -16,7 +16,11 @@ def create_app( config_class=Config ):
   app = Flask(__name__)
   app.config.from_object(config_class)
 
-  
+
+  # Register blueprints and routes
+  from app.main import bp as main_bp
+  from app.main import routes
+
 
   with app.app_context():
 
@@ -29,9 +33,6 @@ def create_app( config_class=Config ):
 
 
 
-  # Register blueprints and routes
-  from app.main import bp as main_bp
-  from app.main import routes
   
   app.register_blueprint(main_bp)
 
