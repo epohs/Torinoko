@@ -1,5 +1,5 @@
 from flask import render_template, request, url_for, redirect
-from sqlalchemy import or_, delete
+from sqlalchemy import or_, delete, inspect
 from sqlalchemy.exc import IntegrityError
 from app.ext import db
 from app.main import bp
@@ -269,6 +269,12 @@ def purge_old_notes():
   """
   Before any page request we are going to purge all expired notes.
   """
+
+  # Check if the table exists
+  inspector = inspect(db.engine)
+  if not inspector.has_table('notes'):
+    # Exit early if the table doesn't exist
+    return
   
   current_timestamp = datetime.now()
 
