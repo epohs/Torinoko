@@ -28,7 +28,7 @@ This project takes most of it's inspiration from [Onetimesecret](https://onetime
 
 ## Detailed installation example
 
-Todo: Add a more detailed walkthrough of setting up Nginx and Gunicorn on a raspberry pi
+Todo: Add a more detailed walkthrough of setting up Nginx and Gunicorn on a raspberry pi.
 
 ## To-do
 
