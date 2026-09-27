@@ -33,6 +33,11 @@ class Config:
   SLUG_MAX_LENGTH = 20
   
   
+  # Keep a log of note events (created, read, expired...) for `flask stats`.
+  # Events hold no slugs, content or visitor details.
+  TRACK_STATS = True
+  
+  
   # Let form CSRF tokens last as long as the browser session, so a
   # secret page left open for a while can still be submitted.
   WTF_CSRF_TIME_LIMIT = None
