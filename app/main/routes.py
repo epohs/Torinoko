@@ -1,6 +1,6 @@
 import time
 from flask import render_template, request, url_for, redirect, current_app, make_response
-from sqlalchemy import or_, delete, update
+from sqlalchemy import or_, delete, select, update
 from app.ext import db
 from app.main import bp
 from app.main.forms import NewNoteForm, ViewNoteForm
@@ -379,17 +379,30 @@ def purge_old_notes():
 
   current_timestamp = utc_now()
 
-  # Query to delete rows with expired timestamps
-  expired_notes = delete(Note).where(
-                                      or_(
-                                           Note.expires_at < current_timestamp,  # Expired notes
-                                           Note.expires_at.is_(None)             # Notes with null expires_at
-                                         )
-                                    )
+  # Find expired notes, then delete them one at a time. Only the request
+  # whose delete actually removes a note records it as expired, so two
+  # workers purging at once can't count the same note twice.
+  expired_notes = db.session.execute(
+                    select( Note.id, Note.expires_at ).where(
+                      or_(
+                           Note.expires_at < current_timestamp,  # Expired notes
+                           Note.expires_at.is_(None)             # Notes with null expires_at
+                         )
+                    )
+                  ).all()
 
 
-  # Execute the query
-  db.session.execute(expired_notes)
+  for note_id, expires_at in expired_notes:
+
+    note_deleted = db.session.execute(
+                     delete(Note).where( Note.id == note_id )
+                   ).rowcount
+
+    if note_deleted:
+
+      NoteEvent.record( 'expired', occurred_at=expires_at or current_timestamp )
+
+
   db.session.commit()
 
 
