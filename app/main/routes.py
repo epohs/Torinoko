@@ -1,4 +1,4 @@
-from flask import render_template, request, url_for, redirect
+from flask import render_template, request, url_for, redirect, current_app
 from sqlalchemy import or_, delete, inspect
 from sqlalchemy.exc import IntegrityError
 from app.ext import db
@@ -6,6 +6,24 @@ from app.main import bp
 from app.main.forms import NewNoteForm, ViewNoteForm
 from app.models.note import Note
 from datetime import datetime
+
+
+
+
+
+
+
+
+def slug_looks_valid(slug):
+  """
+  Check that a slug is within the configured length bounds
+  before bothering the database with it.
+  """
+
+  return (
+           isinstance(slug, str) and
+           current_app.config['SLUG_MIN_LENGTH'] <= len(slug) <= current_app.config['SLUG_MAX_LENGTH']
+         )
 
 
 
@@ -114,7 +132,7 @@ def secret(slug):
   """
 
 
-  if not isinstance(slug, str) or len(slug) < 5 or len(slug) > 20:
+  if not slug_looks_valid(slug):
   
     return redirect(url_for('main.no_note'))
     
@@ -156,7 +174,7 @@ def view_note(slug):
   """
 
 
-  if not isinstance(slug, str) or len(slug) < 5 or len(slug) > 20:
+  if not slug_looks_valid(slug):
   
     return redirect(url_for('main.no_note'))
     
@@ -319,8 +337,7 @@ def method_not_allowed(e):
   resource_id = url_segments[2]
 
   if (
-        ( isinstance(resource_id, str) ) and 
-        ( 5 <= len(resource_id) <= 20) and
+        slug_looks_valid(resource_id) and
         ( request.path == url_for('main.view_note', slug=resource_id) )
      ):
 

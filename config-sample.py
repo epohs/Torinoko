@@ -23,5 +23,11 @@ class Config:
         or 'sqlite:///' + os.path.join(basedir, 'data/db.sqlite')
   
   
+  # Minimum and maximum lengths of note slugs.
+  # Shorter slugs are tried first, getting longer only on collision.
+  SLUG_MIN_LENGTH = 5
+  SLUG_MAX_LENGTH = 20
+  
+  
   # Don't store changes to the database.
   SQLALCHEMY_TRACK_MODIFICATIONS = False
