@@ -1,10 +1,19 @@
 from flask import render_template, request, url_for, redirect, current_app
-from sqlalchemy import or_, delete, inspect
+from sqlalchemy import or_, delete, update, inspect
 from app.ext import db
 from app.main import bp
 from app.main.forms import NewNoteForm, ViewNoteForm
 from app.main.utils import get_good_slug, utc_now
 from app.models.note import Note
+
+
+
+
+
+
+
+# Number of bad passphrase attempts before a note is destroyed.
+MAX_BAD_VIEWS = 5
 
 
 
@@ -133,7 +142,7 @@ def secret(slug):
       
       if note.bad_view_count:
         
-        num_remaining = 5 - int(note.bad_view_count)
+        num_remaining = MAX_BAD_VIEWS - int(note.bad_view_count)
         
         num_remaining_msg = f'{num_remaining} remaining attempt{"" if num_remaining == 1 else "s"}'
       
@@ -175,24 +184,43 @@ def view_note(slug):
     
       passphrase = request.form.get('passphrase')
       
+      # Hold on to these now. The commit below expires the loaded note.
+      note_content = note.content
+      note_salt = note.salt
+      
+      
+      # Claim one attempt before trying to decrypt.
+      # Doing this in a single conditional UPDATE means parallel requests
+      # can't squeeze in more guesses than MAX_BAD_VIEWS allows.
+      # A successful view deletes the note, so the claimed attempt
+      # only counts against bad passphrases.
+      attempt_claimed = db.session.execute(
+                          update(Note)
+                          .where( Note.id == note.id, Note.bad_view_count < MAX_BAD_VIEWS )
+                          .values( bad_view_count = Note.bad_view_count + 1 )
+                        ).rowcount
+      db.session.commit()
+      
+      if not attempt_claimed:
+      
+        return redirect( url_for('main.no_note') )
+      
+      
       # The passphrase, if any, is used together with the app's secret
       # and the note's salt to decrypt our note.
-      key = gen_fernet_key( current_app.config['SECRET_KEY'], passphrase, note.salt )
+      key = gen_fernet_key( current_app.config['SECRET_KEY'], passphrase, note_salt )
 
 
 
       # Try to decrypt our note.
-      # If the passphrase is incorrect, increment the bad_view counter
-      # and redirect back to the secret page.
+      # If the passphrase is incorrect the claimed attempt stands,
+      # and we redirect back to the secret page.
       try:
         
         fernet = Fernet(key)
-        decrypted_note = fernet.decrypt( note.content ).decode('utf-8')
+        decrypted_note = fernet.decrypt( note_content ).decode('utf-8')
     
       except (InvalidToken, TypeError):
-
-        note.bad_view_count += 1
-        db.session.commit()
 
         return redirect( url_for('main.secret', slug=slug) )
       
@@ -274,7 +302,7 @@ def purge_old_notes():
                                       or_(
                                            Note.expires_at < current_timestamp,  # Expired notes
                                            Note.expires_at.is_(None),            # Notes with null expires_at
-                                           Note.bad_view_count >= 5              # Too many bad passphrase attempts
+                                           Note.bad_view_count >= MAX_BAD_VIEWS  # Too many bad passphrase attempts
                                          )
                                     )
 
