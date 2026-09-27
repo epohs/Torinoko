@@ -1,9 +1,9 @@
 from flask import render_template, request, url_for, redirect, current_app
 from sqlalchemy import or_, delete, inspect
-from sqlalchemy.exc import IntegrityError
 from app.ext import db
 from app.main import bp
 from app.main.forms import NewNoteForm, ViewNoteForm
+from app.main.utils import get_good_slug
 from app.models.note import Note
 from datetime import datetime
 
@@ -69,37 +69,23 @@ def new_note():
 
   if request.method == 'POST' and form.validate():
 
-  
-    from app.ext import db
 
+    new_note = Note(
+                     content=form.new_note.data,
+                     passphrase=form.passphrase.data,
+                     expires=form.expires.data
+                   )
 
-    try:
-
-      new_note = Note(
-                       content=form.new_note.data,
-                       passphrase=form.passphrase.data,
-                       expires=form.expires.data
-                     )
-      
-      db.session.add(new_note)
-      db.session.flush()
-
-    except IntegrityError:
-
-      db.session.rollback()
-
-    else:
-
-      db.session.commit()
-
+    slug = get_good_slug(
+                          new_note,
+                          current_app.config['SLUG_MIN_LENGTH'],
+                          current_app.config['SLUG_MAX_LENGTH']
+                        )
     
-    
-    just_added_note = Note.query.get( new_note.id )
-    
-    if just_added_note:
+    if slug:
     
       # A new note was created. Go to the secret/share page.
-      return redirect(url_for('main.secret', slug=just_added_note.slug))
+      return redirect(url_for('main.secret', slug=slug))
       
     else:
       

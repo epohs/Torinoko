@@ -1,8 +1,8 @@
 import base64, hashlib
-import numpy as np
 import string
 from secrets import choice
-from functools import partial
+from sqlalchemy.exc import IntegrityError
+from app.ext import db
 
 
 
@@ -34,25 +34,14 @@ def gen_fernet_key(passcode:bytes) -> bytes:
 
 
 
-def produce_slugs(amount_of_keys, min_max=None, _randint=np.random.randint):
+def gen_slug(length:int) -> str:
   """
-  Create a number of potential random strings to be used as note slugs.
+  Create a random string to be used as a note slug.
   """
-    
-  if min_max is None:
-    
-    min_max = { 'min':5, 'max':20 }
-  
-  keys = set()
-  
-  pickchar = partial(
-    np.random.choice,
-    np.array(list(string.ascii_lowercase + string.ascii_uppercase + string.digits)))
-    
-  while len(keys) < amount_of_keys:
-    keys |= {''.join([pickchar() for _ in range( _randint(min_max['min'], min_max['max']) )]) for _ in range(amount_of_keys - len(keys))}
 
-  return keys
+  slug_chars = string.ascii_lowercase + string.ascii_uppercase + string.digits
+
+  return ''.join( choice(slug_chars) for _ in range(length) )
 
 
 
@@ -61,58 +50,43 @@ def produce_slugs(amount_of_keys, min_max=None, _randint=np.random.randint):
 
 
 
-def get_good_slug(model_obj):
+def get_good_slug(note, min_length:int, max_length:int, attempts_per_length:int=3):
   """
-  Take a list of potential slugs, check the database to make sure the
-  slug is not already in use and return the first free one.
-  """  
-  
-  # Each dictionary in this list represents one batch of slugs.
-  # min/max refers to the lengths of the slugs in each batch.
-  slug_ranges = [
-                  { 'min':5, 'max':7 },
-                  { 'min':8, 'max':12 },
-                  { 'min':13, 'max':20 }
-                ]
-                
-  # Loop through each batch.
-  # We start with the shorter slugs just to have a nicer URL,
-  # getting longer as we go to reduce the risk of collision.
-  for i in range( len(slug_ranges) ):
-  
-  
-    slug_range = slug_ranges[i]
-    
-  
-    # We pull 15 slugs for each batch
-    slugs = produce_slugs(15, slug_range)
-  
-    good_slug = None
-  
-  
-    # Loop through our random slugs checking for the first slug
-    # that doesn't already exist in the database
-    for slug in slugs:
-  
-      found_row = model_obj.query.filter_by( slug=slug ).first()
-  
-      if not found_row:
-  
-        good_slug = slug
-  
-        break
-    
-    # If we have a good slug and a valid form
-    # we're ready to create a new note.
-    # Otherwise, something weird wend wrong
-    if good_slug:
-    
-      return good_slug
+  Save a note under the shortest random slug that isn't already in use,
+  and return that slug.
+
+  Rather than checking the database for a free slug first, we try the
+  insert and let the unique constraint on slug reject a collision.
+  Checking first leaves a gap where another request can take the slug
+  between our check and our insert.
+  """
+
+  # We start with the shortest slugs just to have a nicer URL,
+  # getting longer after a few collisions to reduce the risk of more.
+  for length in range( min_length, max_length + 1 ):
+
+    for _ in range( attempts_per_length ):
+
+      note.slug = gen_slug(length)
+
+      db.session.add(note)
+
+      try:
+
+        db.session.commit()
+
+      except IntegrityError:
+
+        # Slug is taken. The rollback detaches the note so we can retry.
+        db.session.rollback()
+
+        continue
+
+      return note.slug
 
 
 
-  # If we reach this point we have looped through all of our batches
-  # of slugs and not found an unused slug.
+  # If we reach this point every length collided repeatedly.
   return None
 
 
