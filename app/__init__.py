@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from config import Config
 from app.ext import db
@@ -36,7 +37,21 @@ def create_app( config_class=Config ):
   
   app.register_blueprint(main_bp)
 
-	
+
+  # Version static URLs by file mtime so browser and CDN caches
+  # pick up changes as soon as they are deployed.
+  @app.url_defaults
+  def version_static_urls(endpoint, values):
+
+    if endpoint == 'static' and 'filename' in values:
+
+      file_path = os.path.join(app.static_folder, values['filename'])
+
+      if os.path.isfile(file_path):
+
+        values['v'] = int(os.stat(file_path).st_mtime)
+
+
  
 
   # Disable browser caching if we're in debug mode
