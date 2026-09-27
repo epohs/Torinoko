@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 from sqlalchemy import event
 from config import Config
 from app.ext import db
@@ -17,6 +18,10 @@ def create_app( config_class=Config ):
 
   app = Flask(__name__)
   app.config.from_object(config_class)
+
+  # Trust the scheme passed along by the reverse proxy, so URLs we
+  # build (like the share URL) use https when the visitor did.
+  app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
 
 
   # Register blueprints and routes
