@@ -226,6 +226,7 @@ def view_note(slug):
       note_id = note.id
       note_content = note.content
       note_salt = note.salt
+      note_created_at = note.created_at
       
       
       # Claim one attempt before trying to decrypt.
@@ -264,9 +265,16 @@ def view_note(slug):
         # If that was the last allowed attempt, destroy the note.
         # This is done here rather than in the purge so that a purge can't
         # delete a note while a correct passphrase is still being checked.
-        db.session.execute(
-          delete(Note).where( Note.id == note_id, Note.bad_view_count >= MAX_BAD_VIEWS )
-        )
+        NoteEvent.record('wrong_passphrase')
+
+        note_locked = db.session.execute(
+                        delete(Note).where( Note.id == note_id, Note.bad_view_count >= MAX_BAD_VIEWS )
+                      ).rowcount
+
+        if note_locked:
+
+          NoteEvent.record('locked')
+
         db.session.commit()
 
         return redirect( url_for('main.secret', slug=slug) )
@@ -279,6 +287,11 @@ def view_note(slug):
       note_deleted = db.session.execute(
                        delete(Note).where( Note.id == note_id )
                      ).rowcount
+
+      if note_deleted:
+
+        NoteEvent.record( 'read', seconds_to_read=round( (utc_now() - note_created_at).total_seconds() ) )
+
       db.session.commit()
       
       if not note_deleted:
