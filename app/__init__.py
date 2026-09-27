@@ -44,6 +44,12 @@ def create_app( config_class=Config ):
     db.create_all()
     db.session.commit()	
 
+    # Close the connections used for setup. With gunicorn --preload this
+    # runs before workers fork, and SQLite connections must not be shared
+    # across processes. Each worker opens its own when it needs one.
+    db.session.remove()
+    db.engine.dispose()
+
 
 
   
