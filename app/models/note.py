@@ -4,7 +4,6 @@ from app.ext import db
 from app.main.utils import gen_fernet_key, get_expires_at, utc_now
 from datetime import timezone
 from sqlalchemy.types import TypeDecorator, DateTime
-from sqlalchemy.ext.hybrid import hybrid_property
 
 # @todo Switch to AES_GCM
 # @see https://asecuritysite.com/encryption/aes_gcm
