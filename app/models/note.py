@@ -1,4 +1,4 @@
-from config import Config
+from flask import current_app
 from app.ext import db
 from app.main.utils import gen_fernet_key, get_expires_at
 from datetime import datetime, timezone
@@ -18,8 +18,6 @@ class Note(db.Model):
   """
 
   __tablename__ = "notes"
-  
-  secret = Config.SECRET_KEY
   
 
   id = db.Column(db.Integer, primary_key=True)
@@ -45,15 +43,16 @@ class Note(db.Model):
     Set some rules and default values for how our notes must formatted.
     """
   
+    secret = current_app.config['SECRET_KEY']
     
     # If we have a passphrase, include it when encrypting the note.
     if passphrase:
     
-      key_seed = self.secret.join( passphrase )
+      key_seed = secret.join( passphrase )
       
     else:
     
-      key_seed = self.secret
+      key_seed = secret
   
   
     # Get the encryption token

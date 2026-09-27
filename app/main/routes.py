@@ -171,11 +171,10 @@ def view_note(slug):
     
     if note:
     
-      from config import Config
       from cryptography.fernet import Fernet, InvalidToken
       from app.main.utils import gen_fernet_key
     
-      secret = Config.SECRET_KEY
+      secret = current_app.config['SECRET_KEY']
       passphrase = request.form.get('passphrase')
       
       
