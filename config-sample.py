@@ -12,6 +12,10 @@ class Config:
   DEVELOPMENT = True
   DEBUG = True
   
+  # Only send the session cookie over HTTPS.
+  # This is off in development so the app works over plain HTTP locally.
+  SESSION_COOKIE_SECURE = not DEVELOPMENT
+  
   # This secret will be the base for note encryption.
   # It will read first from an environment variable, and then use the string
   # defined here.
