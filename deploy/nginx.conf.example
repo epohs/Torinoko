@@ -1,0 +1,68 @@
+# Reverse proxy for Torinoko.
+#
+# nginx carries the security Torinoko doesn't handle itself: TLS, rate limiting,
+# and the headers every page gets. See deploy/README.md for why.
+
+# Rate limit zone. This sits outside the server blocks, which is allowed here
+# because nginx includes site files inside its http block.
+limit_req_zone $binary_remote_addr zone=torinoko:10m rate=20r/m;
+
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name secret.your-domain.com;
+
+    return 301 https://$host$request_uri;
+}
+
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
+
+    server_name secret.your-domain.com;
+
+    ssl_certificate /path/to/fullchain.pem;
+    ssl_certificate_key /path/to/privkey.pem;
+
+    # Behind Cloudflare, uncomment so rate limiting sees each visitor
+    # rather than Cloudflare's servers. See cloudflare-realip.example.
+    #include cloudflare-realip;
+
+
+    # ---- Security Headers ----
+    #
+    # Set here rather than in the app. Don't set them in both places:
+    # nginx adds its headers alongside the app's, and duplicates conflict.
+    add_header Strict-Transport-Security "max-age=63072000" always;
+    add_header Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "no-referrer" always;
+
+
+    location / {
+
+        include proxy_params;
+
+        proxy_pass http://unix:/path/to/Torinoko/app.sock;
+
+    }
+
+
+    # Slugs are short, so the routes that look them up are rate limited.
+    # 10 quick requests, then one every 3 seconds, per visitor.
+    location ~ ^/(secret|note|new)(/|$) {
+
+        limit_req zone=torinoko burst=10 nodelay;
+        limit_req_status 429;
+
+        include proxy_params;
+
+        proxy_pass http://unix:/path/to/Torinoko/app.sock;
+
+    }
+}
