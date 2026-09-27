@@ -11,19 +11,18 @@ This project takes most of it's inspiration from [Onetimesecret](https://onetime
 
 ## Basic Requirements
 
-* [Python 3.8](https://www.python.org)
-* [Sqlite 3](https://sqlite.org)
+* [uv](https://docs.astral.sh/uv/)
+* [Python 3.10+](https://www.python.org) (uv will install it if needed)
+* [Sqlite 3.35+](https://sqlite.org)
 
 
 ## Quick install
 
 * Clone this repository.
 * `cd` into it.
-* Create Virtual environment `python -m venv .venv`.
-* Switch to the virtual environment `source .venv/bin/activate`.
-* Install requirements `pip install -r requirements.txt`.
+* Install dependencies `uv sync`.
 * Create config.py. Use config-sample.py as a guide.
-* Run the project in debug mode with `flask --debug run`.
+* Run the project in debug mode with `uv run flask --debug run`.
 
 
 ## Detailed installation example
