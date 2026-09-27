@@ -66,6 +66,11 @@ def create_app( config_class=Config ):
   app.register_blueprint(main_bp)
 
 
+  # Command line tools, never exposed on the web
+  from app.stats import stats_command
+  app.cli.add_command(stats_command)
+
+
   # Version static URLs by file mtime so browser and CDN caches
   # pick up changes as soon as they are deployed.
   # Because of that, static files can be cached for 3 months.
