@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from sqlalchemy import event
 from config import Config
 from app.ext import db
 
@@ -27,6 +28,17 @@ def create_app( config_class=Config ):
 
     # Initialize the database
     db.init_app(app)
+
+    # Have SQLite overwrite deleted notes on disk, rather than
+    # just marking their space as free to be reused later.
+    if db.engine.dialect.name == 'sqlite':
+
+      @event.listens_for(db.engine, 'connect')
+      def enable_secure_delete(dbapi_connection, connection_record):
+
+        cursor = dbapi_connection.cursor()
+        cursor.execute('PRAGMA secure_delete = ON')
+        cursor.close()
 
     # Create tables if they don't exist	
     db.create_all()
