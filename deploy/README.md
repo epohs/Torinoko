@@ -64,6 +64,21 @@ Only needed if Cloudflare proxies your site. Two things matter:
 
 
 
+## Usage Stats
+
+Torinoko keeps a small log of note events (created, read, expired, locked out) that you can check over SSH. It's a command, not a page, so it's never reachable from the web.
+
+```
+cd /path/to/Torinoko && .venv/bin/flask --app wsgi stats
+```
+
+`--help` lists the options: `--days` for the recent period, `--json`, `--plain`, `--oneline` and `--watch`.
+
+The log holds no slugs, note content or visitor details. Set `TRACK_STATS = False` in `config.py` to stop recording. Counting starts when tracking is turned on; there's no history from before that.
+
+
+
+
 ## Updating
 
 ```
