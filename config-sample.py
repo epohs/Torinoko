@@ -33,5 +33,10 @@ class Config:
   SLUG_MAX_LENGTH = 20
   
   
+  # Let form CSRF tokens last as long as the browser session, so a
+  # secret page left open for a while can still be submitted.
+  WTF_CSRF_TIME_LIMIT = None
+  
+  
   # Don't store changes to the database.
   SQLALCHEMY_TRACK_MODIFICATIONS = False
