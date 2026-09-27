@@ -379,36 +379,27 @@ def purge_old_notes():
 
 
 
+@bp.route('/note/<string:slug>', methods=['GET'])
+def view_note_get(slug):
+  """
+  A direct hit to the view note URL, usually from a refresh
+  or a shared link. The view_note route only accepts POST, so
+  send it to the secret page and let that route handle the lookup.
+  """
+
+  return redirect( url_for('main.secret', slug=slug) )
+
+
+
+
+
+
+
+
 @bp.app_errorhandler(405)
 def method_not_allowed(e):
   """
-  Handle 'method not allowed' errors.
-  
-  The most common reason for this error is a direct hit to the
-  view_note route, which only accepts POST requests.
-  
-  In those cases we won't know if the note slug is valid, but
-  we don't need to.  We'll ust test whether the URL segment looks like
-  a slug, and if it does redirect to the secret page. Let that
-  route handle the note lookup.
+  Handle 'method not allowed' errors by just going home.
   """
 
-  url_segments = request.path.split('/')
-  resource_id = url_segments[2]
-
-  if (
-        slug_looks_valid(resource_id) and
-        ( request.path == url_for('main.view_note', slug=resource_id) )
-     ):
-
-    # If the slug looks like it could be valid just send it to the secret route.
-    return redirect( url_for('main.secret', slug=resource_id) )
-
-  else:
-
-    # If the slug in the url looks invalid just pack up and go home.
-    return redirect( url_for('main.index') )
-
-
-
-
+  return redirect( url_for('main.index') )
