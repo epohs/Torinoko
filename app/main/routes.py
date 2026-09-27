@@ -1,5 +1,6 @@
+import time
 from flask import render_template, request, url_for, redirect, current_app
-from sqlalchemy import or_, delete, update, inspect
+from sqlalchemy import or_, delete, update
 from app.ext import db
 from app.main import bp
 from app.main.forms import NewNoteForm, ViewNoteForm
@@ -315,20 +316,32 @@ def bad_note():
 
 
 
-# @internal This may be excessive. It may be more reasonable to
-# only perform this purge when someone is trying to view a note.
+# Seconds between purges of expired notes.
+# Lookups skip expired notes on their own, so this only needs
+# to run often enough to keep old ciphertext from piling up.
+PURGE_INTERVAL = 60
+
+last_purge = 0.0
+
+
 @bp.before_request
 def purge_old_notes():
   """
-  Before any page request we are going to purge all expired notes.
+  Before a page request, purge all expired notes if we haven't
+  done so in the last PURGE_INTERVAL seconds.
   """
 
-  # Check if the table exists
-  inspector = inspect(db.engine)
-  if not inspector.has_table('notes'):
-    # Exit early if the table doesn't exist
+  global last_purge
+
+  now = time.monotonic()
+
+  if now - last_purge < PURGE_INTERVAL:
+
     return
-  
+
+  last_purge = now
+
+
   current_timestamp = utc_now()
 
   # Query to delete rows with expired timestamps
