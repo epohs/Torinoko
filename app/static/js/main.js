@@ -10,6 +10,9 @@ const counter_el = document.querySelector('.field-wrap.field-passphrase .passphr
 // Share secret URL <details> element
 const share_url_details = document.querySelector('.note-share-url');
 
+// New note form
+const new_note_form = document.querySelector('.form-new-note');
+
 
 
 
@@ -28,6 +31,16 @@ document.addEventListener('DOMContentLoaded', () => {
   
     // Update the counter on every keystroke
     passphrase_field.addEventListener('keyup', update_passphrase_counter);
+    
+  }
+  
+  
+
+  // Flag the new note before the form posts.
+  // This is bound here rather than inline because the CSP blocks inline handlers.
+  if ( new_note_form ) {
+  
+    new_note_form.addEventListener('submit', on_new_note_submit);
     
   }
   
