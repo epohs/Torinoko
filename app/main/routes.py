@@ -224,6 +224,14 @@ def view_note(slug):
     
       except (InvalidToken, TypeError):
 
+        # If that was the last allowed attempt, destroy the note.
+        # This is done here rather than in the purge so that a purge can't
+        # delete a note while a correct passphrase is still being checked.
+        db.session.execute(
+          delete(Note).where( Note.id == note_id, Note.bad_view_count >= MAX_BAD_VIEWS )
+        )
+        db.session.commit()
+
         return redirect( url_for('main.secret', slug=slug) )
       
     
@@ -308,8 +316,7 @@ def purge_old_notes():
   expired_notes = delete(Note).where(
                                       or_(
                                            Note.expires_at < current_timestamp,  # Expired notes
-                                           Note.expires_at.is_(None),            # Notes with null expires_at
-                                           Note.bad_view_count >= MAX_BAD_VIEWS  # Too many bad passphrase attempts
+                                           Note.expires_at.is_(None)             # Notes with null expires_at
                                          )
                                     )
 
