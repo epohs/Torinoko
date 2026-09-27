@@ -112,6 +112,14 @@ def new_note():
                         )
     
     if slug:
+
+      NoteEvent.record(
+                        'created',
+                        occurred_at=new_note.created_at,
+                        has_passphrase=bool(form.passphrase.data),
+                        expires_in=round( (new_note.expires_at - new_note.created_at).total_seconds() )
+                      )
+      db.session.commit()
     
       # A new note was created. Go to the secret/share page.
       return redirect(url_for('main.secret', slug=slug))
