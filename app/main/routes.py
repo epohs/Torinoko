@@ -1,5 +1,5 @@
 import time
-from flask import render_template, request, url_for, redirect, current_app
+from flask import render_template, request, url_for, redirect, current_app, make_response
 from sqlalchemy import or_, delete, update
 from app.ext import db
 from app.main import bp
@@ -277,7 +277,12 @@ def view_note(slug):
         return redirect( url_for('main.no_note') )
       
       
-      return render_template('view-note.html', note=note, decrypted_note=decrypted_note)
+      response = make_response( render_template('view-note.html', note=note, decrypted_note=decrypted_note) )
+      
+      # Never let the decrypted note be cached anywhere.
+      response.headers['Cache-Control'] = 'no-store'
+      
+      return response
       
     else:
     
