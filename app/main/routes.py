@@ -184,7 +184,9 @@ def view_note(slug):
     
       passphrase = request.form.get('passphrase')
       
-      # Hold on to these now. The commit below expires the loaded note.
+      # Hold on to these now. The commit below expires the loaded note,
+      # and another request may delete its row out from under us.
+      note_id = note.id
       note_content = note.content
       note_salt = note.salt
       
@@ -196,7 +198,7 @@ def view_note(slug):
       # only counts against bad passphrases.
       attempt_claimed = db.session.execute(
                           update(Note)
-                          .where( Note.id == note.id, Note.bad_view_count < MAX_BAD_VIEWS )
+                          .where( Note.id == note_id, Note.bad_view_count < MAX_BAD_VIEWS )
                           .values( bad_view_count = Note.bad_view_count + 1 )
                         ).rowcount
       db.session.commit()
@@ -226,15 +228,20 @@ def view_note(slug):
       
     
     
-      # Render the template, then delete the note.
-      try:
+      # Delete the note before showing it, and only show it if this
+      # request is the one that deleted it. Two requests racing each other
+      # can both decrypt the note, but only one of them gets to see it.
+      note_deleted = db.session.execute(
+                       delete(Note).where( Note.id == note_id )
+                     ).rowcount
+      db.session.commit()
       
-        return render_template('view-note.html', note=note, decrypted_note=decrypted_note)
+      if not note_deleted:
       
-      finally:
+        return redirect( url_for('main.no_note') )
       
-        db.session.delete(note)
-        db.session.commit()
+      
+      return render_template('view-note.html', note=note, decrypted_note=decrypted_note)
       
     else:
     
