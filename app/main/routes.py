@@ -40,6 +40,25 @@ def slug_looks_valid(slug):
 
 
 
+def get_live_note(slug):
+  """
+  Find a note by its slug, skipping any that have expired or been
+  locked out but haven't been purged yet.
+  """
+
+  return Note.query.filter(
+                            Note.slug == slug,
+                            Note.expires_at > utc_now(),
+                            Note.bad_view_count < MAX_BAD_VIEWS
+                          ).first()
+
+
+
+
+
+
+
+
 @bp.route('/')
 def index():
   """
@@ -132,7 +151,7 @@ def secret(slug):
     
   else:
   
-    note = Note.query.filter_by( slug=slug ).first()
+    note = get_live_note(slug)
     
     if note:
     
@@ -175,7 +194,7 @@ def view_note(slug):
   else:
   
     # Query the database to see if we have a note with this slug
-    note = Note.query.filter_by( slug=slug ).first()
+    note = get_live_note(slug)
     
     if note:
     
