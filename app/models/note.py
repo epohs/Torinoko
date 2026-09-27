@@ -1,3 +1,4 @@
+import os
 from flask import current_app
 from app.ext import db
 from app.main.utils import gen_fernet_key, get_expires_at
@@ -23,6 +24,7 @@ class Note(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   content = db.Column(db.Text, nullable=True, unique=False)
   slug = db.Column(db.Text, nullable=False, unique=True)
+  salt = db.Column(db.LargeBinary, nullable=False)
   bad_view_count = db.Column(db.Integer, default=0)
   created_at = db.Column(db.DateTime(timezone=True), default=datetime.now)
   expires_at = db.Column(db.DateTime(timezone=True), default=datetime.now)
@@ -43,20 +45,12 @@ class Note(db.Model):
     Set some rules and default values for how our notes must formatted.
     """
   
-    secret = current_app.config['SECRET_KEY']
-    
-    # If we have a passphrase, include it when encrypting the note.
-    if passphrase:
-    
-      key_seed = secret.join( passphrase )
-      
-    else:
-    
-      key_seed = secret
+    # Each note gets its own random salt for key derivation.
+    self.salt = os.urandom(16)
   
-  
-    # Get the encryption token
-    key = gen_fernet_key( key_seed )
+    # Get the encryption token.
+    # If we have a passphrase it is included in the key.
+    key = gen_fernet_key( current_app.config['SECRET_KEY'], passphrase, self.salt )
     fernet = Fernet(key)
   
   

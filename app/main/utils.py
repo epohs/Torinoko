@@ -1,6 +1,7 @@
-import base64, hashlib
+import base64
 import string
 from secrets import choice
+from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 from sqlalchemy.exc import IntegrityError
 from app.ext import db
 
@@ -11,22 +12,22 @@ from app.ext import db
 
 
 
-def gen_fernet_key(passcode:bytes) -> bytes:
+def gen_fernet_key(secret:str, passphrase:str, salt:bytes) -> bytes:
   """
-  Accepts a string and returns a byte-like object to be used
-  in the creation of a Fernet token to encrypt our notes.
-  
-  https://stackoverflow.com/questions/44432945/generating-own-key-with-python-fernet
-  """
-  
-  passcode = passcode.encode('utf-8')
+  Derive the key used to encrypt a note from the app's secret, the
+  optional passphrase, and the note's random salt.
 
-  assert isinstance(passcode, bytes)
-  
-  hlib = hashlib.md5()
-  hlib.update(passcode)
-  
-  return base64.urlsafe_b64encode(hlib.hexdigest().encode('latin-1'))
+  Scrypt is deliberately slow and memory hungry so passphrases can't be
+  cheaply brute forced, and the per-note salt means every note has to
+  be attacked on its own.
+  """
+
+  key_material = f'{secret}\x00{passphrase or ""}'.encode('utf-8')
+
+  kdf = Scrypt(salt=salt, length=32, n=2**14, r=8, p=1)
+
+  return base64.urlsafe_b64encode( kdf.derive(key_material) )
+
 
 
 

@@ -174,22 +174,11 @@ def view_note(slug):
       from cryptography.fernet import Fernet, InvalidToken
       from app.main.utils import gen_fernet_key
     
-      secret = current_app.config['SECRET_KEY']
       passphrase = request.form.get('passphrase')
       
-      
-      # If we have a passphrase use it together with the app's secret
-      # to decrypt our note.
-      if passphrase:
-    
-        key_seed = secret.join( passphrase )
-      
-      else:
-    
-        key_seed = secret
-  
-  
-      key = gen_fernet_key( key_seed )
+      # The passphrase, if any, is used together with the app's secret
+      # and the note's salt to decrypt our note.
+      key = gen_fernet_key( current_app.config['SECRET_KEY'], passphrase, note.salt )
 
 
 
