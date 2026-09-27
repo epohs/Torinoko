@@ -19,6 +19,11 @@ def create_app( config_class=Config ):
   app = Flask(__name__)
   app.config.from_object(config_class)
 
+  # The placeholder secret is public on GitHub. Never run on it outside development.
+  if not app.config.get('DEVELOPMENT') and app.config.get('SECRET_KEY') in (None, '', 'your_secret_key'):
+
+    raise RuntimeError('Set a real SECRET_KEY in config.py')
+
   # Trust the scheme passed along by the reverse proxy, so URLs we
   # build (like the share URL) use https when the visitor did.
   app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
