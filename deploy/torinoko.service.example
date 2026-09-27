@@ -2,6 +2,11 @@
 Description=Torinoko (Gunicorn)
 After=network.target
 
+# Give up after 5 failed starts in a minute, so a broken config
+# shows as failed instead of restarting forever.
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
 [Service]
 User=YOURUSERNAME
 Group=www-data
