@@ -1,0 +1,28 @@
+[Unit]
+Description=Torinoko (Gunicorn)
+After=network.target
+
+[Service]
+User=YOURUSERNAME
+Group=www-data
+
+# Project root directory
+WorkingDirectory=/path/to/Torinoko
+
+# Virtual environment created by `uv sync`
+Environment="PATH=/path/to/Torinoko/.venv/bin"
+
+# --preload sets up the database once, before the workers start.
+# The socket is created with -m 007, so only this user and the
+# www-data group (nginx) can connect to it.
+ExecStart=/path/to/Torinoko/.venv/bin/gunicorn \
+    --preload \
+    --workers 3 \
+    --bind unix:app.sock -m 007 \
+    wsgi:app
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
