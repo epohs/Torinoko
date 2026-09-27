@@ -191,7 +191,15 @@ def view_note(slug):
   if not slug_looks_valid(slug):
   
     return redirect(url_for('main.no_note'))
-    
+
+
+  form = ViewNoteForm()
+
+  # Check the CSRF token and passphrase length before spending an attempt.
+  if not form.validate():
+
+    return redirect( url_for('main.secret', slug=slug) )
+
   else:
   
     # Query the database to see if we have a note with this slug
@@ -202,7 +210,7 @@ def view_note(slug):
       from cryptography.fernet import Fernet, InvalidToken
       from app.main.utils import gen_fernet_key
     
-      passphrase = request.form.get('passphrase')
+      passphrase = form.passphrase.data
       
       # Hold on to these now. The commit below expires the loaded note,
       # and another request may delete its row out from under us.
