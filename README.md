@@ -12,7 +12,7 @@ This project takes most of it's inspiration from [Onetimesecret](https://onetime
 ## Basic Requirements
 
 * [uv](https://docs.astral.sh/uv/)
-* [Python 3.10+](https://www.python.org) (uv will install it if needed)
+* [Python 3.11+](https://www.python.org) (uv will install it if needed)
 * [Sqlite 3](https://sqlite.org)
 
 
