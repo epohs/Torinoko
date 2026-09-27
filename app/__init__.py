@@ -68,6 +68,9 @@ def create_app( config_class=Config ):
 
   # Version static URLs by file mtime so browser and CDN caches
   # pick up changes as soon as they are deployed.
+  # Because of that, static files can be cached for 3 months.
+  app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 7776000
+
   @app.url_defaults
   def version_static_urls(endpoint, values):
 
