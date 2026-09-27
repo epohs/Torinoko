@@ -1,13 +1,56 @@
 import os
 from flask import current_app
 from app.ext import db
-from app.main.utils import gen_fernet_key, get_expires_at
-from datetime import datetime, timezone
+from app.main.utils import gen_fernet_key, get_expires_at, utc_now
+from datetime import timezone
+from sqlalchemy.types import TypeDecorator, DateTime
 from sqlalchemy.ext.hybrid import hybrid_property
 
 # @todo Switch to AES_GCM
 # @see https://asecuritysite.com/encryption/aes_gcm
 from cryptography.fernet import Fernet
+
+
+
+
+
+class UTCDateTime(TypeDecorator):
+  """
+  A datetime column that is always stored as UTC and always
+  comes back out as a timezone aware UTC datetime.
+  
+  SQLite has no timezone support, so without this aware and naive
+  datetimes would be silently mixed.
+  """
+
+  impl = DateTime
+  cache_ok = True
+
+
+  def process_bind_param(self, value, dialect):
+
+    if value is not None:
+
+      # Refuse naive datetimes rather than guess what timezone they are in.
+      if value.tzinfo is None:
+
+        raise ValueError('UTCDateTime requires a timezone aware datetime')
+
+      value = value.astimezone(timezone.utc).replace(tzinfo=None)
+
+    return value
+
+
+  def process_result_value(self, value, dialect):
+
+    if value is not None:
+
+      value = value.replace(tzinfo=timezone.utc)
+
+    return value
+
+
+
 
 
 
@@ -26,8 +69,8 @@ class Note(db.Model):
   slug = db.Column(db.Text, nullable=False, unique=True)
   salt = db.Column(db.LargeBinary, nullable=False)
   bad_view_count = db.Column(db.Integer, default=0)
-  created_at = db.Column(db.DateTime(timezone=True), default=datetime.now)
-  expires_at = db.Column(db.DateTime(timezone=True), default=datetime.now)
+  created_at = db.Column(UTCDateTime, default=utc_now)
+  expires_at = db.Column(UTCDateTime, default=utc_now)
 
 
   

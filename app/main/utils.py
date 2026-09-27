@@ -1,5 +1,6 @@
 import base64
 import string
+from datetime import datetime, timedelta, timezone
 from secrets import choice
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 from sqlalchemy.exc import IntegrityError
@@ -98,12 +99,27 @@ def get_good_slug(note, min_length:int, max_length:int, attempts_per_length:int=
 
 
 
+def utc_now():
+  """
+  Current time as a timezone aware UTC datetime.
+  
+  All times are stored and compared in UTC. Convert to a local
+  timezone only when displaying.
+  """
+
+  return datetime.now(timezone.utc)
+
+
+
+
+
+
+
+
 def get_expires_at( seconds=None ):
   """
   Calculate an expiration timestamp based on a seconds parameter
   """
-  
-  from datetime import datetime, timedelta
 
   # Default to 1 day
   default_seconds_to_add = 86400
@@ -140,7 +156,7 @@ def get_expires_at( seconds=None ):
   
   
   # Add the number of seconds to the current timestamp and return.
-  return datetime.now() + timedelta( seconds = seconds_to_add )
+  return utc_now() + timedelta( seconds = seconds_to_add )
 
 
 

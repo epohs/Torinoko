@@ -3,9 +3,8 @@ from sqlalchemy import or_, delete, inspect
 from app.ext import db
 from app.main import bp
 from app.main.forms import NewNoteForm, ViewNoteForm
-from app.main.utils import get_good_slug
+from app.main.utils import get_good_slug, utc_now
 from app.models.note import Note
-from datetime import datetime
 
 
 
@@ -268,7 +267,7 @@ def purge_old_notes():
     # Exit early if the table doesn't exist
     return
   
-  current_timestamp = datetime.now()
+  current_timestamp = utc_now()
 
   # Query to delete rows with expired timestamps
   expired_notes = delete(Note).where(
