@@ -6,6 +6,7 @@ from app.main import bp
 from app.main.forms import NewNoteForm, ViewNoteForm
 from app.main.utils import get_good_slug, utc_now
 from app.models.note import Note
+from app.models.note_event import NoteEvent
 
 
 
